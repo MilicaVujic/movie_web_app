@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using movie_web_app.Dtos;
 using movie_web_app.Models;
 using movie_web_app.Services;
 
@@ -15,7 +16,7 @@ namespace movie_web_app.Controllers
             _movieService = movieService;
         }
         [HttpGet]
-        public async Task<IEnumerable<Movie>> Get()
+        public async Task<IEnumerable<MovieDto>> Get()
         {
             return await _movieService.GetAllMovies();
         }

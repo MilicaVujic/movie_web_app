@@ -30,6 +30,8 @@ builder.Services.AddCors(options =>
 });
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<MovieFirebaseRepository>();
+builder.Services.AddScoped<ActorFirebaseRepository>();
+
 
 builder.Services.AddControllersWithViews();
 

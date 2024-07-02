@@ -15,8 +15,7 @@ namespace movie_web_app.Repositories
 
         }
 
-        public async Task<List<Movie>> GetAllMovies()
-        {
+        public async Task<List<Movie>> GetAllMovies(){
             List<Movie> movies = new List<Movie>();
 
             FirebaseResponse response = await _client.GetAsync("movies");
@@ -25,14 +24,32 @@ namespace movie_web_app.Repositories
                 dynamic data = response.ResultAs<dynamic>();
                 foreach (var movie in data)
                 {
-                    Movie movieObj = new Movie(movie.Value.Id.ToString(), movie.Value.Title.ToString(), Movie.ParseGenreEnum(movie.Value.Genre.ToString()),Convert.ToDouble(movie.Value.Duration), Convert.ToInt32(movie.Value.Year), Convert.ToDouble(movie.Value.Rating), movie.Value.CoverImage.ToString());
-  
-                    movies.Add(movieObj);
+                        if (movie != null)
+                        {
+                            List<string> actorIds = new List<string>();
+                             foreach (var actorId in movie.ActorIds)
+                             {
+                                actorIds.Add(actorId.ToString());
+                             }
+
+                            Movie movieObj = new Movie(
+                                movie.Id?.ToString(),
+                                movie.Title?.ToString(),
+                                Movie.ParseGenreEnum(movie.Genre?.ToString()),
+                                Convert.ToDouble(movie.Duration),
+                                Convert.ToInt32(movie.Year),
+                                Convert.ToDouble(movie.Rating),
+                                movie.CoverImage?.ToString(),
+                                actorIds);
+
+                            movies.Add(movieObj);
+                        } 
                 }
             }
 
             return movies;
         }
+
         
     }
 

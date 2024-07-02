@@ -9,8 +9,10 @@
         public int Year { get; private set; }
         public double Rating { get; private set; }
         public string CoverImage { get; private set; }
+        public List<string> ActorIds { get; private set; }
 
-        public Movie(string id, string title, Genre Genre, double duration, int year, double rating, string coverImage) { 
+        public Movie(string id, string title, Genre Genre, double duration, int year, double rating, string coverImage, List<String> actors)
+        {
             this.Id = id;
             this.Title = title;
             this.Genre = Genre;
@@ -18,7 +20,8 @@
             this.Year = year;
             this.Rating = rating;
             this.CoverImage = coverImage;
-        }
+            this.ActorIds = actors;
+       }
 
         public static Genre ParseGenreEnum(string genreStr)
         {

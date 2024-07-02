@@ -1,10 +1,10 @@
-﻿using movie_web_app.Models;
+﻿using movie_web_app.Dtos;
 
 namespace movie_web_app.Services
 {
     public interface IMovieService
     {
-        Task<List<Movie>> GetAllMovies();
+        Task<List<MovieDto>> GetAllMovies();
 
     }
 }
