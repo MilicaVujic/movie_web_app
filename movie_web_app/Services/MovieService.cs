@@ -3,15 +3,16 @@ using movie_web_app.Repositories;
 
 namespace movie_web_app.Services
 {
-    public class MovieService
+    public class MovieService:IMovieService
     {
-        private MovieFirebaseRepository repository;
-        public MovieService(){
-            repository= new MovieFirebaseRepository();  
+        private readonly MovieFirebaseRepository _movieRepository;
+        public MovieService(MovieFirebaseRepository movieRepository)
+        {
+            _movieRepository = movieRepository;
         }
         public async Task<List<Movie>> GetAllMovies()
         {
-           return await repository.GetAllMovies();
+           return await _movieRepository.GetAllMovies();
         }
 
     }

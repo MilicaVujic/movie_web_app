@@ -2,14 +2,24 @@
 {
     public class Movie
     {
-        public string Id { get; set; }
-        public string Title { get; set; }
-        public Genre Genre { get; set; }
-        public double Duration { get; set; }
-        public int Year { get; set; }
-        public double Rating { get; set; }
+        public string Id { get; private set; }
+        public string Title { get; private set; }
+        public Genre Genre { get; private set; }
+        public double Duration { get; private set; }
+        public int Year { get; private set; }
+        public double Rating { get; private set; }
+        public string CoverImage { get; private set; }
 
-        public Movie() { }
+        public Movie(string id, string title, Genre Genre, double duration, int year, double rating, string coverImage) { 
+            this.Id = id;
+            this.Title = title;
+            this.Genre = Genre;
+            this.Duration = duration;
+            this.Year = year;
+            this.Rating = rating;
+            this.CoverImage = coverImage;
+        }
+
         public static Genre ParseGenreEnum(string genreStr)
         {
             Enum.TryParse(typeof(Genre), genreStr, true, out object genre);

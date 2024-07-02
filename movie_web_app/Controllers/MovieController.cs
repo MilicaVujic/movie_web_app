@@ -8,14 +8,16 @@ namespace movie_web_app.Controllers
     [Route("api/[controller]")]
     public class MovieController:ControllerBase
     {
-        private MovieService movieService;
-        public MovieController() { 
-            movieService= new MovieService();
+        private readonly IMovieService _movieService;
+
+        public MovieController(IMovieService movieService)
+        {
+            _movieService = movieService;
         }
         [HttpGet]
         public async Task<IEnumerable<Movie>> Get()
         {
-            return await movieService.GetAllMovies();
+            return await _movieService.GetAllMovies();
         }
     }
 }

@@ -1,9 +1,24 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
+using FireSharp.Config;
+using FireSharp.Interfaces;
+using movie_web_app.Repositories;
+using movie_web_app.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddJsonFile("appsettings.json", optional: false);
+
+IFirebaseClient client;
+
+builder.Services.AddSingleton<IFirebaseClient>(serviceProvider =>
+{
+    var firebaseConfig = builder.Configuration.GetSection("FirebaseConfig").Get<FirebaseConfig>();
+    var config = new FirebaseConfig
+    {
+        AuthSecret = firebaseConfig.AuthSecret,
+        BasePath = firebaseConfig.BasePath
+    };
+    client = new FireSharp.FirebaseClient(config);
+    return client;
+});
 
 builder.Services.AddCors(options =>
 {
@@ -13,6 +28,8 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
+builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<MovieFirebaseRepository>();
 
 builder.Services.AddControllersWithViews();
 

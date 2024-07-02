@@ -18,7 +18,6 @@ export class Home extends Component {
             <table>
                 <thead>
                     <tr>
-                        <th>Id</th>
                         <th>Title</th>
                         <th>Genre</th>
                         <th>Duration (min)</th>
@@ -29,12 +28,12 @@ export class Home extends Component {
                 <tbody>
                     {movies.map(movie =>
                         <tr key={movie.id}>
-                            <td>{movie.id}</td>
                             <td>{movie.title}</td>
                             <td>{movie.genre}</td>
                             <td>{movie.duration}</td>
                             <td>{movie.year}</td>
                             <td>{movie.rating}</td>
+                            <td>    <img src={movie.coverImage} alt="Cover image" style={{ width: '5em', height: '5em' }}></img></td>
                         </tr>
                     )}
                 </tbody>
