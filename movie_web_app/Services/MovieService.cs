@@ -42,7 +42,8 @@ namespace movie_web_app.Services
                     Year = movie.Year,
                     Rating = movie.Rating,
                     CoverImage = movie.CoverImage,
-                    Actors = actors
+                    Actors = actors,
+                    Description= movie.Description
                 };
 
                 movieDtos.Add(movieDto);

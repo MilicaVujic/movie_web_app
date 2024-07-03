@@ -40,7 +40,8 @@ namespace movie_web_app.Repositories
                                 Convert.ToInt32(movie.Year),
                                 Convert.ToDouble(movie.Rating),
                                 movie.CoverImage?.ToString(),
-                                actorIds);
+                                actorIds,
+                                movie.Description.ToString());
 
                             movies.Add(movieObj);
                         } 
