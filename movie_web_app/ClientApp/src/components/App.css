@@ -1,0 +1,17 @@
+
+.movie-card-light {
+    background-color: #ffffff;
+    color: #000000;
+}
+
+
+.movie-card-dark {
+    background-color: #333333;
+    color: #ffffff;
+}
+
+
+.movie-card:hover {
+    transform: scale(1.05); 
+    transition: transform 0.3s ease; 
+}
