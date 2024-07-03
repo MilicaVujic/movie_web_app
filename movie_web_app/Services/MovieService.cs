@@ -13,11 +13,36 @@ namespace movie_web_app.Services
             _movieRepository = movieRepository;
             _actorRepository = actorRepository;
         }
-        public async Task<List<MovieDto>> GetAllMovies()
+        public async Task<List<MovieDto>> GetAll()
         {
             List<Movie> movies = await _movieRepository.GetAllMovies();
             List<MovieDto> movieDtos = await MapMoviesToDtos(movies);
             return movieDtos;
+        }
+
+        public async Task<MovieDto> GetById(string id)
+        {
+            Movie movie= await _movieRepository.GetMovieById(id);
+            List<Actor> actors = new List<Actor>();
+            foreach (var actorId in movie.ActorIds)
+            {
+                Actor actor = await _actorRepository.GetActorAsync(actorId);
+                actors.Add(actor);
+            }
+
+            MovieDto movieDto = new MovieDto
+            {
+                Id = movie.Id,
+                Title = movie.Title,
+                Genre = movie.Genre,
+                Duration = movie.Duration,
+                Year = movie.Year,
+                Rating = movie.Rating,
+                CoverImage = movie.CoverImage,
+                Actors = actors,
+                Description = movie.Description
+            };
+            return movieDto;
         }
 
         private async Task<List<MovieDto>> MapMoviesToDtos(List<Movie> movies)

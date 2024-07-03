@@ -2,6 +2,7 @@
 using FireSharp.Interfaces;
 using FireSharp.Response;
 using movie_web_app.Models;
+using Newtonsoft.Json.Linq;
 
 namespace movie_web_app.Repositories
 {
@@ -51,7 +52,23 @@ namespace movie_web_app.Repositories
             return movies;
         }
 
-        
+
+        public async Task<Movie> GetMovieById(string id)
+        {
+            FirebaseResponse response = await _client.GetAsync($"movies/{id}");
+
+            if (response.Body != "null")
+            {
+                JObject jsonObject = JObject.Parse(response.Body);
+                Movie movie = new Movie(id, jsonObject["Title"].ToString(),Movie.ParseGenreEnum(jsonObject["Genre"].ToString()), Convert.ToDouble(jsonObject["Duration"]), Convert.ToInt32(jsonObject["Year"]), Convert.ToDouble(jsonObject["Rating"]), jsonObject["CoverImage"].ToString(), jsonObject["ActorIds"].ToObject<List<string>>(), jsonObject["Description"].ToString());
+
+                return movie;
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 
 

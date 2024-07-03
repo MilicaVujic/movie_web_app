@@ -4,7 +4,9 @@ namespace movie_web_app.Services
 {
     public interface IMovieService
     {
-        Task<List<MovieDto>> GetAllMovies();
+        Task<List<MovieDto>> GetAll();
+        Task<MovieDto> GetById(string id);
+
 
     }
 }

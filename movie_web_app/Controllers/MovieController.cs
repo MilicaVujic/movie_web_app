@@ -18,7 +18,12 @@ namespace movie_web_app.Controllers
         [HttpGet]
         public async Task<IEnumerable<MovieDto>> Get()
         {
-            return await _movieService.GetAllMovies();
+            return await _movieService.GetAll();
+        }
+        [HttpGet("{id}")]
+        public async Task<MovieDto> GetById(string id)
+        {
+            return await _movieService.GetById(id);
         }
     }
 }
