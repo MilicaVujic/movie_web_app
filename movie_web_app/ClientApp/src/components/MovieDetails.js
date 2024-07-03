@@ -1,11 +1,20 @@
-import React, { Component, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import { Grid, Typography, Card, CardMedia, CardContent } from '@mui/material';
-import { useParams } from 'react-router-dom'; // Importovanje useParams umesto withRouter
+import { Grid, Typography, Card, CardMedia, CardContent, IconButton } from '@mui/material';
+import { PlayArrow } from '@mui/icons-material'; // Uvoz ikone za reprodukciju
+import { useParams } from 'react-router-dom';
+import './App.css'; // Uvoz CSS datoteke za stilizaciju
+
+const genreNames = {
+    0: 'Comedy',
+    1: 'Action',
+    2: 'Horror',
+    3: 'Documentary',
+    4: 'Cartoon'
+};
 
 function MovieDetails() {
-    const { id } = useParams(); // Koristi useParams za dobijanje parametara iz URL-a
-
+    const { id } = useParams();
     const [movie, setMovie] = useState(null);
     const [loading, setLoading] = useState(true);
 
@@ -23,7 +32,7 @@ function MovieDetails() {
         };
 
         fetchMovie();
-    }, [id]); // Dodaj id kao zavisnost useEffect-a da se komponenta ponovo učitava kada se promeni id
+    }, [id]);
 
     if (loading) {
         return <p>Loading...</p>;
@@ -33,28 +42,29 @@ function MovieDetails() {
         return <p>Movie not found.</p>;
     }
 
-    const { title, genre, duration, year, rating, coverImage, description, actors } = movie;
+    const { title, genre, duration, year, rating, coverImage, description, actors, playLink } = movie;
 
     return (
         <Grid container spacing={3}>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={5}>
                 <Card>
                     <CardMedia
                         component="img"
                         height="100%"
                         image={coverImage}
                         alt="Movie Cover"
+                        style={{ maxHeight: '100%', objectFit: 'contain' }}
                     />
                 </Card>
             </Grid>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} md={7}>
                 <Card>
                     <CardContent>
                         <Typography gutterBottom variant="h5" component="div">
                             {title}
                         </Typography>
                         <Typography variant="body2" color="text.secondary">
-                            <strong>Genre:</strong> {genre}<br />
+                            <strong>Genre:</strong> {genreNames[genre]}<br />
                             <strong>Duration:</strong> {duration} min<br />
                             <strong>Year:</strong> {year}<br />
                             <strong>Rating:</strong> {rating}<br /><br />

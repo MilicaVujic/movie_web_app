@@ -40,7 +40,7 @@ namespace movie_web_app.Services
                 Rating = movie.Rating,
                 CoverImage = movie.CoverImage,
                 Actors = actors,
-                Description = movie.Description
+                Description = movie.Description,
             };
             return movieDto;
         }

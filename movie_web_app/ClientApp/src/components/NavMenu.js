@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Collapse, Navbar, NavbarBrand, NavbarToggler, NavItem, NavLink, Button } from 'reactstrap';
+import { Collapse, Navbar, NavbarBrand, NavbarToggler, Button } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import './NavMenu.css';
 
@@ -11,10 +11,10 @@ export class NavMenu extends Component {
 
     this.toggleNavbar = this.toggleNavbar.bind(this);
     this.toggleTheme = this.toggleTheme.bind(this);
-    
+
     this.state = {
       collapsed: true,
-      theme: 'light' // Početna tema je svijetla
+      theme: 'light'
     };
   }
 
@@ -27,10 +27,6 @@ export class NavMenu extends Component {
   toggleTheme() {
     const newTheme = this.state.theme === 'light' ? 'dark' : 'light';
     this.setState({ theme: newTheme });
-
-    // Ovdje možete postaviti globalni state ili koristiti Redux za promjenu teme u cijeloj aplikaciji
-    // Primjer kako bi moglo izgledati postavljanje teme u globalnom Redux state-u:
-    // this.props.setTheme(newTheme);
   }
 
   render() {
@@ -39,18 +35,16 @@ export class NavMenu extends Component {
     return (
       <header>
         <Navbar className={`navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3 ${theme === 'dark' ? 'navbar-dark bg-dark' : 'navbar-light bg-light'}`} light>
-          <NavbarBrand tag={Link} to="/">movie_web_app</NavbarBrand>
+          <NavbarBrand tag={Link} to="/">Movie App</NavbarBrand>
           <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
           <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!this.state.collapsed} navbar>
-            <ul className="navbar-nav flex-grow">
-              <NavItem>
-                <NavLink tag={Link} className="text-dark" to="/">Home</NavLink>
-              </NavItem>
-            </ul>
           </Collapse>
-          <Button color="secondary" className="ml-auto" onClick={this.toggleTheme}>
-            Toggle Theme
-          </Button>
+          <div className="ml-auto">
+            <span className={`theme-text ${theme === 'dark' ? 'text-white' : 'text-dark'}`}>Change Theme</span>
+            <Button color="secondary" className={`toggle-theme-button ${theme}`} onClick={this.toggleTheme}>
+              <div className="toggle-theme-icon"></div>
+            </Button>
+          </div>
         </Navbar>
       </header>
     );
