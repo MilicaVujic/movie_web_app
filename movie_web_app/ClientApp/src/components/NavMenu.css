@@ -17,30 +17,36 @@ html {
   box-shadow: 0 .25rem .75rem rgba(0, 0, 0, .05);
 }
 
+/* NavMenu.css */
+
 .toggle-theme-button {
-  width: 50px; 
-  height: 30px; 
-  border-radius: 15px; 
-  padding: 2px;
+  width: 40px;
+  height: 20px;
+  border-radius: 10px;
   position: relative;
   overflow: hidden;
-  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
 .toggle-theme-icon {
-  width: 50%; 
-  height: 100%;
-  background-color: #fff; 
-  transition: transform 0.3s ease; 
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  top: 2px; /* Adjust based on your design */
+  left: 2px; /* Adjust based on your design */
+  transition: left 0.3s ease;
 }
 
-.toggle-theme-button.dark .toggle-theme-icon {
-  transform: translateX(100%); 
+.toggle-theme-icon-dark {
+  background-color: #000; /* Color of the icon in dark mode */
+  left: 22px; /* Position of the icon in dark mode */
 }
 
-.toggle-theme-button.light .toggle-theme-icon {
-  transform: translateX(0); 
+.toggle-theme-icon-light {
+  background-color: #fff; /* Color of the icon in light mode */
 }
+
 
 .theme-text {
   margin-right: 10px; 

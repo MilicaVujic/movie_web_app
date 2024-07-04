@@ -1,17 +1,69 @@
 
-.movie-card-light {
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+.search-input {
+    margin-right: 10px;
+    width: 300px; 
+}
+
+.genre-select {
+    width: 200px; 
+}
+
+.light-theme {
     background-color: #ffffff;
     color: #000000;
 }
+.card:hover{
+    transform: translateY(-7px);
+
+}
 
 
-.movie-card-dark {
+.dark-theme {
     background-color: #333333;
     color: #ffffff;
 }
 
 
-.movie-card:hover {
-    transform: scale(1.05); 
-    transition: transform 0.3s ease; 
+
+
+
+.custom-container {
+    padding-top: 0.5rem;
+    padding-bottom: 0.5rem;
+    margin: 0;
+}
+
+.custom-container.dark-theme {
+    background-color: #666666; 
+}
+
+.search-form {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-bottom: 20px;
+}
+
+
+
+h1,
+p {
+    color: inherit; 
+}
+
+h1#tableLabel {
+    margin-bottom: 10px;
+}
+
+.home-div{
+    margin-left: 5%;
+    margin-right: 5%;
+}
+.movie-details-container {
+    margin-left: 10%;
+    margin-right: 10%;
 }

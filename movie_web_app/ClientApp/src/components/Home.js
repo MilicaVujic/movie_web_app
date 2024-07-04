@@ -15,7 +15,10 @@ import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
 import Box from '@mui/material/Box';
+
 import './App.css'; 
+import { ThemeProvider } from '@emotion/react';
+import { Container } from '@mui/material';
 
 const genreMap = {
     0: 'Comedy',
@@ -34,8 +37,8 @@ export class Home extends Component {
             movies: [],
             loading: true,
             searchTitle: '',
-            searchGenre: '', // Dodajemo polje za pretragu po žanru
-            searchActor: '' // Dodajemo polje za pretragu po imenu glumca
+            searchGenre: '', 
+            searchActor: '' 
         };
     }
 
@@ -58,27 +61,27 @@ export class Home extends Component {
         const normalizedSearchTitle = searchTitle.toLowerCase();
         const normalizedSearchGenre = searchGenre.toLowerCase();
         const normalizedSearchActor = searchActor.toLowerCase();
-
-        // Filtriranje filmova
+    
         const filteredMovies = movies.filter(movie => {
             const normalizedMovieTitle = movie.title.toLowerCase();
-            const normalizedMovieGenre = genreMap[movie.genre].toLowerCase(); // Prikazuje naziv žanra umesto broja
+            const normalizedMovieGenre = genreMap[movie.genre].toLowerCase(); 
             const normalizedActors = movie.actors.map(actor => `${actor.name} ${actor.surname}`).join(', ').toLowerCase();
-
-            // Proveravamo da li film zadovoljava uslove pretrage
+    
             const titleMatch = normalizedMovieTitle.includes(normalizedSearchTitle);
-            const genreMatch = normalizedMovieGenre.includes(normalizedSearchGenre) || normalizedSearchGenre === ''; // Ukoliko je searchGenre prazan string, svaki film zadovoljava ovaj uslov
+            const genreMatch = normalizedMovieGenre.includes(normalizedSearchGenre) || normalizedSearchGenre === ''; 
             const actorMatch = normalizedActors.includes(normalizedSearchActor);
-
+    
             return titleMatch && genreMatch && actorMatch;
         });
-
+    
+        const currentTheme = 'light-theme'; 
+    
         return (
             <Grid container spacing={3}>
                 {filteredMovies.map(movie => (
                     <Grid item key={movie.id} xs={12} sm={6} md={4} lg={3}>
                         <Link to={`/movie/${movie.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                            <Card className="movie-card">
+                            <Card className="card"> 
                                 <CardMedia
                                     component="img"
                                     height="200"
@@ -90,7 +93,7 @@ export class Home extends Component {
                                         {movie.title}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                        Genre: {genreMap[movie.genre]}<br /> {/* Prikazuje naziv žanra umesto broja */}
+                                        Genre: {genreMap[movie.genre]}<br /> 
                                         Duration: {movie.duration} min<br />
                                         Year: {movie.year}<br />
                                         Rating: {movie.rating}<br />
@@ -110,6 +113,7 @@ export class Home extends Component {
             </Grid>
         );
     }
+    
 
     handleTitleChange = (event) => {
         this.setState({ searchTitle: event.target.value });
@@ -128,19 +132,17 @@ export class Home extends Component {
         const contents = loading ? <p><em>Loading...</em></p> : this.renderMoviesCards();
 
         return (
-            <Box p={3}>
-                <div>
+                <div className="home-div"> 
                     <h1 id="tableLabel">Movies</h1>
                     <p>Find a movie you like.</p>
-                    <div className="search-form">
+                    <div >
                         <TextField
                             label="Search by title"
                             variant="outlined"
                             value={searchTitle}
                             onChange={this.handleTitleChange}
-                            style={{ marginRight: 10, width: 300 }}
                         />
-                        <FormControl variant="outlined" style={{ marginRight: 10, width: 200 }}>
+                        <FormControl variant="outlined" className="search-input genre-select">
                             <InputLabel id="genre-label">Search by genre</InputLabel>
                             <Select
                                 labelId="genre-label"
@@ -159,13 +161,13 @@ export class Home extends Component {
                             variant="outlined"
                             value={searchActor}
                             onChange={this.handleActorChange}
-                            style={{ width: 300 }}
+                            className="search-input"
                         />
                     </div>
                     <br />
                     {contents}
+                    <br></br><br></br><br></br><br></br><br></br>
                 </div>
-            </Box>
         );
     }
 
@@ -180,3 +182,4 @@ export class Home extends Component {
         }
     }
 }
+
