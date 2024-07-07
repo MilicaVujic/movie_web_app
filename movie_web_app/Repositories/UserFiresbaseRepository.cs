@@ -30,5 +30,45 @@ namespace movie_web_app.Repositories
                 return null;
             }
         }
+
+        public async Task AddFavoriteMovie(string userId, string movieId)
+        {
+            try
+            {
+                User user= await GetUserAsync(userId);
+
+                if (!(user.FavouriteMoviesIds.Contains(movieId)))
+                {
+                    user.FavouriteMoviesIds.Add(movieId);
+
+                    await _client.UpdateAsync($"users/{userId}", user);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task RemoveFavoriteMovie(string userId, string movieId)
+        {
+            try
+            {
+                User user = await GetUserAsync(userId);
+
+                if (user.FavouriteMoviesIds.Contains(movieId))
+                {
+                    user.FavouriteMoviesIds.Remove(movieId);
+
+                    await _client.UpdateAsync($"users/{userId}", user);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+        }
     }
 }

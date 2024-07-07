@@ -8,17 +8,18 @@ namespace movie_web_app.Services
     {
         private readonly MovieFirebaseRepository _movieRepository;
         private readonly ActorFirebaseRepository _actorRepository;
-        private readonly UserFiresbaseRepository _userFiresbaseRepository;
-        public MovieService(MovieFirebaseRepository movieRepository, ActorFirebaseRepository actorRepository, UserFiresbaseRepository userFiresbaseRepository)
+        private readonly UserFiresbaseRepository _userRepository;
+        public MovieService(MovieFirebaseRepository movieRepository, ActorFirebaseRepository actorRepository, UserFiresbaseRepository userRepository)
         {
             _movieRepository = movieRepository;
             _actorRepository = actorRepository;
-            _userFiresbaseRepository = userFiresbaseRepository;
+            _userRepository = userRepository;
         }
 
-        public Task<List<MovieDto>> AddToFavourites(string id)
+        public async Task<List<MovieDto>> AddToFavourites(string id)
         {
-            throw new NotImplementedException();
+            await _userRepository.AddFavoriteMovie("1", id);
+            return await GetFavouriteMovies();
         }
 
         public async Task<List<MovieDto>> GetAll()
@@ -56,7 +57,7 @@ namespace movie_web_app.Services
         public async Task<List<MovieDto>> GetFavouriteMovies()
         {
             List<Movie> movies = new List<Movie>();
-            User user = await _userFiresbaseRepository.GetUserAsync("1");
+            User user = await _userRepository.GetUserAsync("1");
             foreach(var movieId in user.FavouriteMoviesIds)
             {
                 Movie movie= await _movieRepository.GetMovieById(movieId);
@@ -68,7 +69,8 @@ namespace movie_web_app.Services
 
         public async Task<List<MovieDto>> RemoveFromFavourites(string id)
         {
-            throw new NotImplementedException();
+            await _userRepository.RemoveFavoriteMovie("1", id);
+            return await GetFavouriteMovies();
         }
 
         private async Task<List<MovieDto>> MapMoviesToDtos(List<Movie> movies)

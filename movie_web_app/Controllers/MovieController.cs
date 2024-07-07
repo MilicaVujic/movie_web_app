@@ -27,7 +27,7 @@ namespace movie_web_app.Controllers
         [HttpPatch("favourite/add/{id}")]
         public async Task<IEnumerable<MovieDto>> AddToFavouries(string id)
         {
-            return null;
+            return await _movieService.AddToFavourites(id);
         }
         [HttpPatch("favourite/remove/{id}")]
         public async Task<IEnumerable<MovieDto>> RemoveFromFavouries(string id)

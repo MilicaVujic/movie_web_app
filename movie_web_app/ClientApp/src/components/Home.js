@@ -45,14 +45,49 @@ export class Home extends Component {
         this.populateMoviesData();
     }
 
-    toggleFavorite = (movieId) => {
-        const updatedMovies = this.state.movies.map(movie => {
+    toggleFavorite = async (movieId) => {
+        const { movies, favouriteMovies } = this.state;
+
+        const updatedMovies = movies.map(movie => {
             if (movie.id === movieId) {
-                return { ...movie, favorite: !movie.favorite };
+                const isFavorite = !movie.favorite;
+                if (isFavorite) {
+                    this.addToFavourites(movieId);
+                } else {
+                    this.removeFavourites(movieId);
+                }
+                return { ...movie, favorite: isFavorite };
             }
             return movie;
         });
-        this.setState({ movies: updatedMovies });
+
+        this.setState({ movies: updatedMovies, favouriteMovies });
+    }
+
+    addToFavourites = async (movieId) => {
+        try {
+            const favouriteMoviesResponse= await axios.patch(`https://localhost:7004/api/movie/favourite/add/${movieId}`);
+            const FavouriteMovies = favouriteMoviesResponse.data.map(movie=>({
+                ...movie,
+                favorite: true
+            }))
+            this.setState({favouriteMovies:FavouriteMovies});
+        } catch (error) {
+            console.error('Error adding to favourites:', error);
+        }
+    }
+
+    removeFavourites = async (movieId) => {
+        try {
+            const favouriteMoviesResponse=await axios.patch(`https://localhost:7004/api/movie/favourite/remove/${movieId}`);
+            const FavouriteMovies = favouriteMoviesResponse.data.map(movie=>({
+                ...movie,
+                favorite: true
+            }))
+            this.setState({favouriteMovies:FavouriteMovies});
+        } catch (error) {
+            console.error('Error removing from favourites:', error);
+        }
     }
 
     toggleShowFavourites = () => {
@@ -72,60 +107,57 @@ export class Home extends Component {
         const normalizedSearchTitle = searchTitle.toLowerCase();
         const normalizedSearchGenre = searchGenre.toLowerCase();
         const normalizedSearchActor = searchActor.toLowerCase();
-
+    
         const filteredMovies = showFavourites ? favouriteMovies : movies;
-
+    
         const filteredAndSearchedMovies = filteredMovies.filter(movie => {
             const normalizedMovieTitle = movie.title.toLowerCase();
             const normalizedMovieGenre = genreMap[movie.genre].toLowerCase();
             const normalizedActors = movie.actors.map(actor => `${actor.name} ${actor.surname}`).join(', ').toLowerCase();
-
+    
             const titleMatch = normalizedMovieTitle.includes(normalizedSearchTitle);
             const genreMatch = normalizedMovieGenre.includes(normalizedSearchGenre) || normalizedSearchGenre === '';
             const actorMatch = normalizedActors.includes(normalizedSearchActor);
-
+    
             return titleMatch && genreMatch && actorMatch;
         });
-
-        const currentTheme = 'light-theme';
-
+    
         return (
             <Grid container spacing={3}>
                 {filteredAndSearchedMovies.map(movie => (
                     <Grid item key={movie.id} xs={12} sm={6} md={4} lg={3}>
-                        <Link to={`/movie/${movie.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                            <Card className="card">
-                                <CardMedia
-                                    component="img"
-                                    height="200"
-                                    image={movie.coverImage}
-                                    alt="Cover image"
-                                />
-                                <CardContent>
-                                    <Typography gutterBottom variant="h5" component="div">
-                                        {movie.title}
-                                    </Typography>
-                                    <Typography variant="body2" color="text.secondary">
-                                        Genre: {genreMap[movie.genre]}<br />
-                                        Duration: {movie.duration} min<br />
-                                        Year: {movie.year}<br />
-                                        Rating: {movie.rating}<br />
-                                        Actors: {movie.actors.map(actor => `${actor.name} ${actor.surname}`).join(', ')}
-                                    </Typography>
-                                    <IconButton
-                                        onClick={() => this.toggleFavorite(movie.id)}
-                                        color={movie.favorite ? 'secondary' : 'default'}
-                                    >
-                                        {movie.favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                                    </IconButton>
-                                </CardContent>
-                            </Card>
-                        </Link>
+                        <Card className="card">
+                            <CardMedia
+                                component="img"
+                                height="200"
+                                image={movie.coverImage}
+                                alt="Cover image"
+                            />
+                            <CardContent>
+                                <Typography gutterBottom variant="h5" component="div">
+                                    {movie.title}
+                                </Typography>
+                                <Typography variant="body2" color="text.secondary">
+                                    Genre: {genreMap[movie.genre]}<br />
+                                    Duration: {movie.duration} min<br />
+                                    Year: {movie.year}<br />
+                                    Rating: {movie.rating}<br />
+                                    Actors: {movie.actors.map(actor => `${actor.name} ${actor.surname}`).join(', ')}
+                                </Typography>
+                                <IconButton
+                                    onClick={() => this.toggleFavorite(movie.id)}
+                                    color={movie.favorite ? 'secondary' : 'default'}
+                                >
+                                    {movie.favorite ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                                </IconButton>
+                            </CardContent>
+                        </Card>
                     </Grid>
                 ))}
             </Grid>
         );
     }
+    
 
     handleTitleChange = (event) => {
         this.setState({ searchTitle: event.target.value });
