@@ -8,11 +8,19 @@ namespace movie_web_app.Services
     {
         private readonly MovieFirebaseRepository _movieRepository;
         private readonly ActorFirebaseRepository _actorRepository;
-        public MovieService(MovieFirebaseRepository movieRepository, ActorFirebaseRepository actorRepository)
+        private readonly UserFiresbaseRepository _userFiresbaseRepository;
+        public MovieService(MovieFirebaseRepository movieRepository, ActorFirebaseRepository actorRepository, UserFiresbaseRepository userFiresbaseRepository)
         {
             _movieRepository = movieRepository;
             _actorRepository = actorRepository;
+            _userFiresbaseRepository = userFiresbaseRepository;
         }
+
+        public Task<List<MovieDto>> AddToFavourites(string id)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task<List<MovieDto>> GetAll()
         {
             List<Movie> movies = await _movieRepository.GetAllMovies();
@@ -43,6 +51,24 @@ namespace movie_web_app.Services
                 Description = movie.Description,
             };
             return movieDto;
+        }
+
+        public async Task<List<MovieDto>> GetFavouriteMovies()
+        {
+            List<Movie> movies = new List<Movie>();
+            User user = await _userFiresbaseRepository.GetUserAsync("1");
+            foreach(var movieId in user.FavouriteMoviesIds)
+            {
+                Movie movie= await _movieRepository.GetMovieById(movieId);
+                movies.Add(movie);
+            }
+            return await MapMoviesToDtos(movies);
+
+        }
+
+        public async Task<List<MovieDto>> RemoveFromFavourites(string id)
+        {
+            throw new NotImplementedException();
         }
 
         private async Task<List<MovieDto>> MapMoviesToDtos(List<Movie> movies)

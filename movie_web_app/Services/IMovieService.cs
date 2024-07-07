@@ -6,6 +6,10 @@ namespace movie_web_app.Services
     {
         Task<List<MovieDto>> GetAll();
         Task<MovieDto> GetById(string id);
+        Task<List<MovieDto>> AddToFavourites(string id);
+        Task<List<MovieDto>> RemoveFromFavourites(string id);
+        Task<List<MovieDto>> GetFavouriteMovies();
+
 
 
     }

@@ -24,7 +24,7 @@
             this.CoverImage = coverImage;
             this.ActorIds = actors;
             this.Description = Description;
-       }
+        }
 
         public static Genre ParseGenreEnum(string genreStr)
         {

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using movie_web_app.Dtos;
-using movie_web_app.Models;
 using movie_web_app.Services;
 
 namespace movie_web_app.Controllers
@@ -24,6 +23,21 @@ namespace movie_web_app.Controllers
         public async Task<MovieDto> GetById(string id)
         {
             return await _movieService.GetById(id);
+        }
+        [HttpPatch("favourite/add/{id}")]
+        public async Task<IEnumerable<MovieDto>> AddToFavouries(string id)
+        {
+            return null;
+        }
+        [HttpPatch("favourite/remove/{id}")]
+        public async Task<IEnumerable<MovieDto>> RemoveFromFavouries(string id)
+        {
+            return null;
+        }
+        [HttpGet("favourite")]
+        public async Task<IEnumerable<MovieDto>> GetFavouriteMovies()
+        {
+            return await _movieService.GetFavouriteMovies();
         }
     }
 }

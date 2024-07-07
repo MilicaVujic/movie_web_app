@@ -14,11 +14,7 @@ import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
 import Select from '@mui/material/Select';
 import InputLabel from '@mui/material/InputLabel';
-import Box from '@mui/material/Box';
-
-import './App.css'; 
-import { ThemeProvider } from '@emotion/react';
-import { Container } from '@mui/material';
+import './App.css';
 
 const genreMap = {
     0: 'Comedy',
@@ -35,10 +31,13 @@ export class Home extends Component {
         super(props);
         this.state = {
             movies: [],
+            favouriteMovies: [],
+            allmovies:[],
             loading: true,
             searchTitle: '',
-            searchGenre: '', 
-            searchActor: '' 
+            searchGenre: '',
+            searchActor: '',
+            showFavourites: false 
         };
     }
 
@@ -56,32 +55,46 @@ export class Home extends Component {
         this.setState({ movies: updatedMovies });
     }
 
+    toggleShowFavourites = () => {
+        this.setState(prevState => ({
+            showFavourites: !prevState.showFavourites,
+        }));
+        if(this.state.showFavourites){
+            this.setState.movies=this.favouriteMovies;
+        }else{
+            this.setState.movies=this.allmovies;
+        }
+
+    }
+
     renderMoviesCards = () => {
-        const { movies, searchTitle, searchGenre, searchActor } = this.state;
+        const { movies, favouriteMovies, showFavourites, searchTitle, searchGenre, searchActor } = this.state;
         const normalizedSearchTitle = searchTitle.toLowerCase();
         const normalizedSearchGenre = searchGenre.toLowerCase();
         const normalizedSearchActor = searchActor.toLowerCase();
-    
-        const filteredMovies = movies.filter(movie => {
+
+        const filteredMovies = showFavourites ? favouriteMovies : movies;
+
+        const filteredAndSearchedMovies = filteredMovies.filter(movie => {
             const normalizedMovieTitle = movie.title.toLowerCase();
-            const normalizedMovieGenre = genreMap[movie.genre].toLowerCase(); 
+            const normalizedMovieGenre = genreMap[movie.genre].toLowerCase();
             const normalizedActors = movie.actors.map(actor => `${actor.name} ${actor.surname}`).join(', ').toLowerCase();
-    
+
             const titleMatch = normalizedMovieTitle.includes(normalizedSearchTitle);
-            const genreMatch = normalizedMovieGenre.includes(normalizedSearchGenre) || normalizedSearchGenre === ''; 
+            const genreMatch = normalizedMovieGenre.includes(normalizedSearchGenre) || normalizedSearchGenre === '';
             const actorMatch = normalizedActors.includes(normalizedSearchActor);
-    
+
             return titleMatch && genreMatch && actorMatch;
         });
-    
-        const currentTheme = 'light-theme'; 
-    
+
+        const currentTheme = 'light-theme';
+
         return (
             <Grid container spacing={3}>
-                {filteredMovies.map(movie => (
+                {filteredAndSearchedMovies.map(movie => (
                     <Grid item key={movie.id} xs={12} sm={6} md={4} lg={3}>
                         <Link to={`/movie/${movie.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
-                            <Card className="card"> 
+                            <Card className="card">
                                 <CardMedia
                                     component="img"
                                     height="200"
@@ -93,7 +106,7 @@ export class Home extends Component {
                                         {movie.title}
                                     </Typography>
                                     <Typography variant="body2" color="text.secondary">
-                                        Genre: {genreMap[movie.genre]}<br /> 
+                                        Genre: {genreMap[movie.genre]}<br />
                                         Duration: {movie.duration} min<br />
                                         Year: {movie.year}<br />
                                         Rating: {movie.rating}<br />
@@ -113,7 +126,6 @@ export class Home extends Component {
             </Grid>
         );
     }
-    
 
     handleTitleChange = (event) => {
         this.setState({ searchTitle: event.target.value });
@@ -128,58 +140,75 @@ export class Home extends Component {
     }
 
     render() {
-        const { loading, searchTitle, searchGenre, searchActor } = this.state;
+        const { loading, searchTitle, searchGenre, searchActor, showFavourites } = this.state;
         const contents = loading ? <p><em>Loading...</em></p> : this.renderMoviesCards();
 
         return (
-                <div className="home-div"> 
-                    <h1 id="tableLabel">Movies</h1>
-                    <p>Find a movie you like.</p>
-                    <div >
-                        <TextField
-                            label="Search by title"
-                            variant="outlined"
-                            value={searchTitle}
-                            onChange={this.handleTitleChange}
-                        />
-                        <FormControl variant="outlined" className="search-input genre-select">
-                            <InputLabel id="genre-label">Search by genre</InputLabel>
-                            <Select
-                                labelId="genre-label"
-                                value={searchGenre}
-                                onChange={this.handleGenreChange}
-                                label="Search by genre"
-                            >
-                                <MenuItem value="">All</MenuItem>
-                                {Object.values(genreMap).map((genre, index) => (
-                                    <MenuItem key={index} value={genre}>{genre}</MenuItem>
-                                ))}
-                            </Select>
-                        </FormControl>
-                        <TextField
-                            label="Search by actor"
-                            variant="outlined"
-                            value={searchActor}
-                            onChange={this.handleActorChange}
-                            className="search-input"
-                        />
-                    </div>
-                    <br />
-                    {contents}
-                    <br></br><br></br><br></br><br></br><br></br>
+            <div className="home-div">
+                <h1 id="tableLabel">Movies</h1>
+                <p>Find a movie you like.</p>
+                <div className="search-bar">
+                    <TextField
+                        label="Search by title"
+                        variant="outlined"
+                        value={searchTitle}
+                        onChange={this.handleTitleChange}
+                        className="search-input"
+                    />
+                    <FormControl variant="outlined" className="search-input genre-select">
+                        <InputLabel id="genre-label">Search by genre</InputLabel>
+                        <Select
+                            labelId="genre-label"
+                            value={searchGenre}
+                            onChange={this.handleGenreChange}
+                            label="Search by genre"
+                        >
+                            <MenuItem value="">All</MenuItem>
+                            {Object.values(genreMap).map((genre, index) => (
+                                <MenuItem key={index} value={genre}>{genre}</MenuItem>
+                            ))}
+                        </Select>
+                    </FormControl>
+                    <TextField
+                        label="Search by actor"
+                        variant="outlined"
+                        value={searchActor}
+                        onChange={this.handleActorChange}
+                        className="search-input"
+                    />
+                    <IconButton
+                        className="favourite-toggle"
+                        onClick={this.toggleShowFavourites}
+                        style={{ fontSize: 30, color: showFavourites ? 'red' : 'inherit' }}
+                    >
+                        {showFavourites ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                    </IconButton>
                 </div>
+                <br />
+                {contents}
+                <br /><br></br><br></br><br></br>
+            </div>
         );
     }
 
     async populateMoviesData() {
         try {
             const response = await axios.get('https://localhost:7004/api/movie');
-            console.log('Movies data:', response.data);
-            const moviesWithFavorites = response.data.map(movie => ({ ...movie, favorite: false }));
-            this.setState({ movies: moviesWithFavorites, loading: false });
+            const favouriteMoviesResponse = await axios.get('https://localhost:7004/api/movie/favourite');
+            const favouriteMovieIds = new Set(favouriteMoviesResponse.data.map(movie => movie.id));
+            const moviesWithFavorites = response.data.map(movie => ({
+                ...movie,
+                favorite: favouriteMovieIds.has(movie.id)
+            }));
+            const FavouriteMovies = favouriteMoviesResponse.data.map(movie=>({
+                ...movie,
+                favorite: true
+            }))
+            this.setState({ movies: moviesWithFavorites, favouriteMovies:FavouriteMovies, loading: false });
+            this.setState({ allmovies: moviesWithFavorites});
+
         } catch (error) {
             console.error('There was an error!', error);
         }
     }
 }
-
