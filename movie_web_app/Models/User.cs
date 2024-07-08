@@ -7,7 +7,7 @@
         public string Surname { get; private set; }
         public string Username { get; private set; }
         public string Password { get; private set; }
-        public List<string> FavouriteMoviesIds { get; private set; }
+        public List<string> FavouriteMoviesIds { get;  set; }
         public User(string id, string name, string surname, string username, string password, List<string> favouriteMoviesIds)
         {
             this.Id = id;

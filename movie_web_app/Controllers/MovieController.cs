@@ -32,7 +32,7 @@ namespace movie_web_app.Controllers
         [HttpPatch("favourite/remove/{id}")]
         public async Task<IEnumerable<MovieDto>> RemoveFromFavouries(string id)
         {
-            return null;
+            return await _movieService.RemoveFromFavourites(id);
         }
         [HttpGet("favourite")]
         public async Task<IEnumerable<MovieDto>> GetFavouriteMovies()

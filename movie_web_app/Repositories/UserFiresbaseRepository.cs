@@ -16,13 +16,17 @@ namespace movie_web_app.Repositories
         public async Task<User> GetUserAsync(string userId)
         {
             FirebaseResponse response = await _client.GetAsync($"users/{userId}");
+            User user;
 
             if (response.Body != "null")
             {
                 JObject jsonObject = JObject.Parse(response.Body);
-
-                User user = new User(userId, jsonObject["Name"].ToString(), jsonObject["Surname"].ToString(), jsonObject["Username"].ToString(), jsonObject["Password"].ToString(), jsonObject["FavouriteMoviesIds"].ToObject<List<string>>());
-
+                if (response.Body.Contains("FavouriteMoviesIds")) {
+                    user = new User(userId, jsonObject["Name"].ToString(), jsonObject["Surname"].ToString(), jsonObject["Username"].ToString(), jsonObject["Password"].ToString(), jsonObject["FavouriteMoviesIds"].ToObject<List<string>>());
+                }
+                else {
+                    user = new User(userId, jsonObject["Name"].ToString(), jsonObject["Surname"].ToString(), jsonObject["Username"].ToString(), jsonObject["Password"].ToString(), new List<string>());
+                }
                 return user;
             }
             else
@@ -60,6 +64,7 @@ namespace movie_web_app.Repositories
                 if (user.FavouriteMoviesIds.Contains(movieId))
                 {
                     user.FavouriteMoviesIds.Remove(movieId);
+
 
                     await _client.UpdateAsync($"users/{userId}", user);
                 }
