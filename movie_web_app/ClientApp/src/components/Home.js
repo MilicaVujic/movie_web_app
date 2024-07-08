@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
@@ -8,7 +9,6 @@ import Grid from '@mui/material/Grid';
 import IconButton from '@mui/material/IconButton';
 import FavoriteIcon from '@mui/icons-material/Favorite';
 import FavoriteBorderIcon from '@mui/icons-material/FavoriteBorder';
-import { Link } from 'react-router-dom';
 import MenuItem from '@mui/material/MenuItem';
 import TextField from '@mui/material/TextField';
 import FormControl from '@mui/material/FormControl';
@@ -32,12 +32,12 @@ export class Home extends Component {
         this.state = {
             movies: [],
             favouriteMovies: [],
-            allmovies:[],
+            allmovies: [],
             loading: true,
             searchTitle: '',
             searchGenre: '',
             searchActor: '',
-            showFavourites: false 
+            showFavourites: false
         };
     }
 
@@ -66,12 +66,12 @@ export class Home extends Component {
 
     addToFavourites = async (movieId) => {
         try {
-            const favouriteMoviesResponse= await axios.patch(`https://localhost:7004/api/movie/favourite/add/${movieId}`);
-            const FavouriteMovies = favouriteMoviesResponse.data.map(movie=>({
+            const response = await axios.patch(`https://localhost:7004/api/movie/favourite/add/${movieId}`);
+            const favouriteMovies = response.data.map(movie => ({
                 ...movie,
                 favorite: true
             }))
-            this.setState({favouriteMovies:FavouriteMovies});
+            this.setState({ favouriteMovies });
         } catch (error) {
             console.error('Error adding to favourites:', error);
         }
@@ -79,12 +79,12 @@ export class Home extends Component {
 
     removeFavourites = async (movieId) => {
         try {
-            const favouriteMoviesResponse=await axios.patch(`https://localhost:7004/api/movie/favourite/remove/${movieId}`);
-            const FavouriteMovies = favouriteMoviesResponse.data.map(movie=>({
+            const response = await axios.patch(`https://localhost:7004/api/movie/favourite/remove/${movieId}`);
+            const favouriteMovies = response.data.map(movie => ({
                 ...movie,
                 favorite: true
             }))
-            this.setState({favouriteMovies:FavouriteMovies});
+            this.setState({ favouriteMovies });
         } catch (error) {
             console.error('Error removing from favourites:', error);
         }
@@ -94,12 +94,6 @@ export class Home extends Component {
         this.setState(prevState => ({
             showFavourites: !prevState.showFavourites,
         }));
-        if(this.state.showFavourites){
-            this.setState.movies=this.favouriteMovies;
-        }else{
-            this.setState.movies=this.allmovies;
-        }
-
     }
 
     renderMoviesCards = () => {
@@ -107,32 +101,34 @@ export class Home extends Component {
         const normalizedSearchTitle = searchTitle.toLowerCase();
         const normalizedSearchGenre = searchGenre.toLowerCase();
         const normalizedSearchActor = searchActor.toLowerCase();
-    
+
         const filteredMovies = showFavourites ? favouriteMovies : movies;
-    
+
         const filteredAndSearchedMovies = filteredMovies.filter(movie => {
             const normalizedMovieTitle = movie.title.toLowerCase();
             const normalizedMovieGenre = genreMap[movie.genre].toLowerCase();
             const normalizedActors = movie.actors.map(actor => `${actor.name} ${actor.surname}`).join(', ').toLowerCase();
-    
+
             const titleMatch = normalizedMovieTitle.includes(normalizedSearchTitle);
             const genreMatch = normalizedMovieGenre.includes(normalizedSearchGenre) || normalizedSearchGenre === '';
             const actorMatch = normalizedActors.includes(normalizedSearchActor);
-    
+
             return titleMatch && genreMatch && actorMatch;
         });
-    
+
         return (
             <Grid container spacing={3}>
                 {filteredAndSearchedMovies.map(movie => (
                     <Grid item key={movie.id} xs={12} sm={6} md={4} lg={3}>
                         <Card className="card">
-                            <CardMedia
-                                component="img"
-                                height="200"
-                                image={movie.coverImage}
-                                alt="Cover image"
-                            />
+                            <Link to={`/movie/${movie.id}`} style={{ textDecoration: 'none' }}>
+                                <CardMedia
+                                    component="img"
+                                    height="200"
+                                    image={movie.coverImage}
+                                    alt="Cover image"
+                                />
+                            </Link>
                             <CardContent>
                                 <Typography gutterBottom variant="h5" component="div">
                                     {movie.title}
@@ -157,7 +153,6 @@ export class Home extends Component {
             </Grid>
         );
     }
-    
 
     handleTitleChange = (event) => {
         this.setState({ searchTitle: event.target.value });
@@ -232,12 +227,12 @@ export class Home extends Component {
                 ...movie,
                 favorite: favouriteMovieIds.has(movie.id)
             }));
-            const FavouriteMovies = favouriteMoviesResponse.data.map(movie=>({
+            const favouriteMovies = favouriteMoviesResponse.data.map(movie => ({
                 ...movie,
                 favorite: true
             }))
-            this.setState({ movies: moviesWithFavorites, favouriteMovies:FavouriteMovies, loading: false });
-            this.setState({ allmovies: moviesWithFavorites});
+            this.setState({ movies: moviesWithFavorites, favouriteMovies, loading: false });
+            this.setState({ allmovies: moviesWithFavorites });
 
         } catch (error) {
             console.error('There was an error!', error);

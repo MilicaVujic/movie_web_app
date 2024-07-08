@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Collapse, Navbar, NavbarBrand, NavbarToggler, Button } from 'reactstrap';
+import { Collapse, Navbar, NavbarBrand, NavbarToggler, Button, NavItem, NavLink } from 'reactstrap';
 import { Link } from 'react-router-dom';
 import './NavMenu.css';
 
@@ -24,7 +24,7 @@ export class NavMenu extends Component {
   toggleTheme() {
     const { toggleTheme } = this.props;
     if (toggleTheme) {
-      toggleTheme(); 
+      toggleTheme();
     }
   }
 
@@ -32,12 +32,20 @@ export class NavMenu extends Component {
     const { collapsed } = this.state;
     const { currentTheme } = this.props;
 
+    // Determine the class for NavLink based on currentTheme
+    const navLinkClass = currentTheme === 'dark' ? 'nav-link nav-link-dark' : 'nav-link';
+
     return (
       <header>
         <Navbar className={`navbar-expand-sm navbar-toggleable-sm ng-white border-bottom box-shadow mb-3 ${currentTheme === 'dark' ? 'navbar-dark bg-dark' : 'navbar-light bg-light'}`} light>
           <NavbarBrand tag={Link} to="/">Movie App</NavbarBrand>
           <NavbarToggler onClick={this.toggleNavbar} className="mr-2" />
           <Collapse className="d-sm-inline-flex flex-sm-row-reverse" isOpen={!collapsed} navbar>
+            <ul className="navbar-nav flex-grow">
+              <NavItem>
+                <NavLink exact tag={Link} className={navLinkClass} to="/">Home</NavLink>
+              </NavItem>
+            </ul>
           </Collapse>
           <div className="ml-auto">
             <span className={`theme-text ${currentTheme === 'dark' ? 'text-white' : 'text-dark'}`}>Change Theme</span>
