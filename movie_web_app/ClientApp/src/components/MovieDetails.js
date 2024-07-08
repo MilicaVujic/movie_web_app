@@ -28,7 +28,20 @@ function MovieDetails() {
                 setLoading(false);
             } catch (error) {
                 console.error('There was an error!', error);
+                console.log("OFFLINE")
+
                 setLoading(false);
+                const storedMovies = JSON.parse(localStorage.getItem("movies"));
+    
+                if (storedMovies) {
+                    for (const movie of storedMovies) {
+                        console.log(movie); 
+                        if (movie.id === id) {
+                            setMovie(movie); 
+                            break; 
+                        }
+                    }
+                }
             }
         };
 

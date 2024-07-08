@@ -1,12 +1,14 @@
 /* eslint-disable no-restricted-globals */
 
+//import { event } from "jquery";
+
 // This service worker can be customized!
 // See https://developers.google.com/web/tools/workbox/modules
 // for the list of available Workbox modules, or add any other
 // code you'd like.
 // You can also remove this file if you'd prefer not to use a
 // service worker, and the Workbox build step will be skipped.
-
+/*
 import { clientsClaim } from 'workbox-core';
 import { ExpirationPlugin } from 'workbox-expiration';
 import { precacheAndRoute, createHandlerBoundToURL } from 'workbox-precaching';
@@ -68,5 +70,34 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
   }
 });
-
+*/
 // Any other custom service worker logic can go here.
+let cacheData="app";
+this.addEventListener("install",(event)=>{
+  event.waitUntil(
+    caches.open(cacheData).then((cache)=>{
+      cache.addAll([
+        '/static/js/bundle.js',
+        '/index.html',
+        '/movie',
+        '/',
+      ])
+    })
+  )
+})
+
+this.addEventListener("fetch",(event)=>{
+  if(!navigator.onLine)
+  {
+  event.respondWith(
+    caches.match(event.request).then((resp)=>{
+      if(resp)
+      {
+        return resp
+      }
+      let requestUrl=event.request.clone();
+      fetch(requestUrl)
+    })
+  )
+}
+})

@@ -62,6 +62,8 @@ export class Home extends Component {
         });
 
         this.setState({ movies: updatedMovies, favouriteMovies });
+        localStorage.setItem("movies",JSON.stringify(updatedMovies))
+
     }
 
     addToFavourites = async (movieId) => {
@@ -72,6 +74,8 @@ export class Home extends Component {
                 favorite: true
             }))
             this.setState({ favouriteMovies });
+            localStorage.setItem("favmovies",JSON.stringify(favouriteMovies))
+            
         } catch (error) {
             console.error('Error adding to favourites:', error);
         }
@@ -85,6 +89,7 @@ export class Home extends Component {
                 favorite: true
             }))
             this.setState({ favouriteMovies });
+            localStorage.setItem("favmovies",JSON.stringify(favouriteMovies))
         } catch (error) {
             console.error('Error removing from favourites:', error);
         }
@@ -227,15 +232,21 @@ export class Home extends Component {
                 ...movie,
                 favorite: favouriteMovieIds.has(movie.id)
             }));
-            const favouriteMovies = favouriteMoviesResponse.data.map(movie => ({
+            const favMovies = favouriteMoviesResponse.data.map(movie => ({
                 ...movie,
                 favorite: true
             }))
-            this.setState({ movies: moviesWithFavorites, favouriteMovies, loading: false });
+            localStorage.setItem("movies",JSON.stringify(moviesWithFavorites))
+            localStorage.setItem("favmovies",JSON.stringify(favMovies))
+
+            this.setState({ movies: moviesWithFavorites, favouriteMovies: favMovies, loading: false });
             this.setState({ allmovies: moviesWithFavorites });
 
         } catch (error) {
             console.error('There was an error!', error);
+            this.setState({ movies: JSON.parse(localStorage.getItem("movies")), loading: false });
+            this.setState({ allmovies: JSON.parse(localStorage.getItem("movies")) });
+            this.setState({ favouriteMovies: JSON.parse(localStorage.getItem("favmovies"))})
         }
     }
 }
