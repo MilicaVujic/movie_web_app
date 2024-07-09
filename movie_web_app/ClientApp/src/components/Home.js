@@ -24,6 +24,8 @@ const genreMap = {
     4: 'Cartoon'
 };
 
+
+
 export class Home extends Component {
     static displayName = Home.name;
 
@@ -32,12 +34,13 @@ export class Home extends Component {
         this.state = {
             movies: [],
             favouriteMovies: [],
-            allmovies: [],
             loading: true,
             searchTitle: '',
             searchGenre: '',
             searchActor: '',
-            showFavourites: false
+            showFavourites: false,
+            searchYear: '',
+            searchRating: ''
         };
     }
 
@@ -62,20 +65,18 @@ export class Home extends Component {
         });
 
         this.setState({ movies: updatedMovies, favouriteMovies });
-        localStorage.setItem("movies",JSON.stringify(updatedMovies))
-
+        localStorage.setItem("movies", JSON.stringify(updatedMovies));
     }
 
     addToFavourites = async (movieId) => {
         try {
-            const response = await axios.patch(`https://localhost:7004/api/movie/favourite/add/${movieId}`);
+            const response = await axios.patch(`http://192.168.0.25:5092/api/movie/favourite/add/${movieId}`);
             const favouriteMovies = response.data.map(movie => ({
                 ...movie,
                 favorite: true
             }))
             this.setState({ favouriteMovies });
-            localStorage.setItem("favmovies",JSON.stringify(favouriteMovies))
-            
+            localStorage.setItem("favmovies", JSON.stringify(favouriteMovies));
         } catch (error) {
             console.error('Error adding to favourites:', error);
         }
@@ -83,13 +84,13 @@ export class Home extends Component {
 
     removeFavourites = async (movieId) => {
         try {
-            const response = await axios.patch(`https://localhost:7004/api/movie/favourite/remove/${movieId}`);
+            const response = await axios.patch(`http://192.168.0.25:5092/api/movie/favourite/remove/${movieId}`);
             const favouriteMovies = response.data.map(movie => ({
                 ...movie,
                 favorite: true
             }))
             this.setState({ favouriteMovies });
-            localStorage.setItem("favmovies",JSON.stringify(favouriteMovies))
+            localStorage.setItem("favmovies", JSON.stringify(favouriteMovies));
         } catch (error) {
             console.error('Error removing from favourites:', error);
         }
@@ -102,10 +103,15 @@ export class Home extends Component {
     }
 
     renderMoviesCards = () => {
-        const { movies, favouriteMovies, showFavourites, searchTitle, searchGenre, searchActor } = this.state;
+        const { movies, favouriteMovies, showFavourites, searchTitle, searchGenre, searchActor, searchYear, searchRating } = this.state;
+        if (!movies || !favouriteMovies) {
+            return null;
+        }
         const normalizedSearchTitle = searchTitle.toLowerCase();
         const normalizedSearchGenre = searchGenre.toLowerCase();
         const normalizedSearchActor = searchActor.toLowerCase();
+        const normalizedSearchYear = searchYear.toString();
+        const normalizedSearchRating = searchRating.toString();
 
         const filteredMovies = showFavourites ? favouriteMovies : movies;
 
@@ -113,12 +119,16 @@ export class Home extends Component {
             const normalizedMovieTitle = movie.title.toLowerCase();
             const normalizedMovieGenre = genreMap[movie.genre].toLowerCase();
             const normalizedActors = movie.actors.map(actor => `${actor.name} ${actor.surname}`).join(', ').toLowerCase();
+            const normalizedMovieYear = movie.year.toString();
+            const normalizedMovieRating = movie.rating.toString();
 
             const titleMatch = normalizedMovieTitle.includes(normalizedSearchTitle);
             const genreMatch = normalizedMovieGenre.includes(normalizedSearchGenre) || normalizedSearchGenre === '';
             const actorMatch = normalizedActors.includes(normalizedSearchActor);
+            const yearMatch = normalizedMovieYear.includes(normalizedSearchYear) || normalizedSearchYear === '';
+            const ratingMatch = normalizedMovieRating >= normalizedSearchRating || normalizedSearchRating === '';
 
-            return titleMatch && genreMatch && actorMatch;
+            return titleMatch && genreMatch && actorMatch && yearMatch && ratingMatch;
         });
 
         return (
@@ -171,20 +181,59 @@ export class Home extends Component {
         this.setState({ searchActor: event.target.value });
     }
 
+    handleYearChange = (event) => {
+        this.setState({ searchYear: event.target.value });
+    }
+
+    handleRatingChange = (event) => {
+        this.setState({ searchRating: event.target.value });
+    }
+
     render() {
-        const { loading, searchTitle, searchGenre, searchActor, showFavourites } = this.state;
+        const { loading, searchTitle, searchGenre, searchActor, showFavourites, searchYear, searchRating } = this.state;
         const contents = loading ? <p><em>Loading...</em></p> : this.renderMoviesCards();
 
         return (
             <div className="home-div">
-                <h1 id="tableLabel">Movies</h1>
-                <p>Find a movie you like.</p>
+                <h1 id="tableLabel">Find a movie you like</h1>
+               <span><span>My favorite movies </span>
+                <IconButton
+                        className="favourite-toggle"
+                        onClick={this.toggleShowFavourites}
+                        style={{ fontSize: 30, color: showFavourites ? 'red' : 'inherit' }}
+                    >
+                        {showFavourites ? <FavoriteIcon /> : <FavoriteBorderIcon />}
+                    </IconButton>
+                </span>
                 <div className="search-bar">
                     <TextField
                         label="Search by title"
                         variant="outlined"
                         value={searchTitle}
                         onChange={this.handleTitleChange}
+                        className="search-input"
+                    />
+                    <TextField
+                        label="Search by actor"
+                        variant="outlined"
+                        value={searchActor}
+                        onChange={this.handleActorChange}
+                        className="search-input"
+                    />
+                    <TextField
+                        label="Search by release year"
+                        variant="outlined"
+                        type="number"
+                        value={searchYear}
+                        onChange={this.handleYearChange}
+                        className="search-input"
+                    />
+                    <TextField
+                        label="Search by minimum rating"
+                        variant="outlined"
+                        type="number"
+                        value={searchRating}
+                        onChange={this.handleRatingChange}
                         className="search-input"
                     />
                     <FormControl variant="outlined" className="search-input genre-select">
@@ -194,6 +243,7 @@ export class Home extends Component {
                             value={searchGenre}
                             onChange={this.handleGenreChange}
                             label="Search by genre"
+                            className="search-genre"
                         >
                             <MenuItem value="">All</MenuItem>
                             {Object.values(genreMap).map((genre, index) => (
@@ -201,20 +251,7 @@ export class Home extends Component {
                             ))}
                         </Select>
                     </FormControl>
-                    <TextField
-                        label="Search by actor"
-                        variant="outlined"
-                        value={searchActor}
-                        onChange={this.handleActorChange}
-                        className="search-input"
-                    />
-                    <IconButton
-                        className="favourite-toggle"
-                        onClick={this.toggleShowFavourites}
-                        style={{ fontSize: 30, color: showFavourites ? 'red' : 'inherit' }}
-                    >
-                        {showFavourites ? <FavoriteIcon /> : <FavoriteBorderIcon />}
-                    </IconButton>
+
                 </div>
                 <br />
                 {contents}
@@ -225,8 +262,8 @@ export class Home extends Component {
 
     async populateMoviesData() {
         try {
-            const response = await axios.get('https://localhost:7004/api/movie');
-            const favouriteMoviesResponse = await axios.get('https://localhost:7004/api/movie/favourite');
+            const response = await axios.get('http://192.168.0.25:5092/api/movie');
+            const favouriteMoviesResponse = await axios.get('http://192.168.0.25:5092/api/movie/favourite');
             const favouriteMovieIds = new Set(favouriteMoviesResponse.data.map(movie => movie.id));
             const moviesWithFavorites = response.data.map(movie => ({
                 ...movie,
@@ -236,17 +273,15 @@ export class Home extends Component {
                 ...movie,
                 favorite: true
             }))
-            localStorage.setItem("movies",JSON.stringify(moviesWithFavorites))
-            localStorage.setItem("favmovies",JSON.stringify(favMovies))
+            localStorage.setItem("movies", JSON.stringify(moviesWithFavorites));
+            localStorage.setItem("favmovies", JSON.stringify(favMovies));
 
             this.setState({ movies: moviesWithFavorites, favouriteMovies: favMovies, loading: false });
-            this.setState({ allmovies: moviesWithFavorites });
 
         } catch (error) {
             console.error('There was an error!', error);
             this.setState({ movies: JSON.parse(localStorage.getItem("movies")), loading: false });
-            this.setState({ allmovies: JSON.parse(localStorage.getItem("movies")) });
-            this.setState({ favouriteMovies: JSON.parse(localStorage.getItem("favmovies"))})
+            this.setState({ favouriteMovies: JSON.parse(localStorage.getItem("favmovies")) });
         }
     }
 }

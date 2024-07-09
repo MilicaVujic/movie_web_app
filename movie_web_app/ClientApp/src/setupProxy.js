@@ -1,32 +1,23 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
-const { env } = require('process');
 
-const target = env.ASPNETCORE_HTTPS_PORT ? `https://localhost:${env.ASPNETCORE_HTTPS_PORT}` :
-    env.ASPNETCORE_URLS ? env.ASPNETCORE_URLS.split(';')[0] : 'http://localhost:56954';
+const target = "https://192.168.0.25:44430"; // Postavi target na ciljni server
 
-
-const context = [
-
-];
+const context = ['/api']; // Definiraj context na kojim putanjama želiš primjenjivati proxy
 
 const onError = (err, req, resp, target) => {
     console.error(`${err.message}`);
-}
+};
 
 module.exports = function (app) {
-  const appProxy = createProxyMiddleware(context, {
-    proxyTimeout: 10000,
-      target: target,
-    // Handle errors to prevent the proxy middleware from crashing when
-    // the ASP NET Core webserver is unavailable
-    onError: onError,
-    secure: false,
-    // Uncomment this line to add support for proxying websockets
-    //ws: true, 
-    headers: {
-      Connection: 'Keep-Alive'
-    }
-  });
+    const appProxy = createProxyMiddleware(context, {
+        target: target,
+        onError: onError,
+        proxyTimeout: 10000,
+        secure: false, // Ako je potrebno, privremeno postavi na false za testiranje
+        headers: {
+            Connection: 'Keep-Alive'
+        }
+    });
 
-  app.use(appProxy);
+    app.use(appProxy);
 };

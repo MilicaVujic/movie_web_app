@@ -50,7 +50,7 @@ builder.Services.AddControllersWithViews();
 var app = builder.Build();
 
 // Uspostavljanje HTTPS redirekcije
-app.UseHttpsRedirection();
+//app.UseHttpsRedirection();
 
 // Omoguæavanje statièkih datoteka (npr. JavaScript, CSS)
 app.UseStaticFiles();
