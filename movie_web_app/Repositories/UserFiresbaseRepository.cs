@@ -22,10 +22,10 @@ namespace movie_web_app.Repositories
             {
                 JObject jsonObject = JObject.Parse(response.Body);
                 if (response.Body.Contains("FavouriteMoviesIds")) {
-                    user = new User(userId, jsonObject["Name"].ToString(), jsonObject["Surname"].ToString(), jsonObject["Username"].ToString(), jsonObject["Password"].ToString(), jsonObject["FavouriteMoviesIds"].ToObject<List<string>>());
+                    user = new User(userId, jsonObject["Name"].ToString(), jsonObject["Surname"].ToString(), jsonObject["Username"].ToString(),  jsonObject["FavouriteMoviesIds"].ToObject<List<string>>());
                 }
                 else {
-                    user = new User(userId, jsonObject["Name"].ToString(), jsonObject["Surname"].ToString(), jsonObject["Username"].ToString(), jsonObject["Password"].ToString(), new List<string>());
+                    user = new User(userId, jsonObject["Name"].ToString(), jsonObject["Surname"].ToString(), jsonObject["Username"].ToString(),  new List<string>());
                 }
                 return user;
             }
@@ -75,5 +75,34 @@ namespace movie_web_app.Repositories
                 throw;
             }
         }
+        public async Task CreateUserAsync(User user)
+        {
+            try
+            {
+                await _client.SetAsync($"users/{user.Id}", user);            
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+        }
+        public async Task<bool> DoesUserExistAsync(string email)
+        {      
+
+            FirebaseResponse response = await _client.GetAsync($"users"); 
+            var users = JObject.Parse(response.Body);
+
+            foreach (var user in users)
+            {
+                if (user.Value["Username"].ToString() == email) 
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+
     }
 }

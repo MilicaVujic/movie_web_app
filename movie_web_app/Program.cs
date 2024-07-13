@@ -1,25 +1,21 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Configuration;
 using movie_web_app.Repositories;
 using movie_web_app.Services;
 using FireSharp.Config;
 using FireSharp.Interfaces;
 using FireSharp;
+using movie_web_app;
+using Firebase.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Uèitavanje konfiguracije iz appsettings.json
 builder.Configuration.AddJsonFile("appsettings.json", optional: false);
 
-// Konfiguracija Firebase klijenta
 IFirebaseClient client;
+var firebaseConfig = builder.Configuration.GetSection("FirebaseConfig").Get<CustomFirebaseConfig>();
+
 builder.Services.AddSingleton<IFirebaseClient>(serviceProvider =>
 {
-    var firebaseConfig = builder.Configuration.GetSection("FirebaseConfig").Get<FirebaseConfig>();
-    var config = new FirebaseConfig
+    var config = new FireSharp.Config.FirebaseConfig
     {
         AuthSecret = firebaseConfig.AuthSecret,
         BasePath = firebaseConfig.BasePath
@@ -28,7 +24,7 @@ builder.Services.AddSingleton<IFirebaseClient>(serviceProvider =>
     return client;
 });
 
-// Dodavanje CORS politike
+
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAnyOrigin",
@@ -38,43 +34,37 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 
-// Dodavanje servisa i repozitorija
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<MovieFirebaseRepository>();
 builder.Services.AddScoped<ActorFirebaseRepository>();
 builder.Services.AddScoped<UserFiresbaseRepository>();
 
-// Dodavanje kontrolera i pogleda
+builder.Services.AddScoped<IUserService>(serviceProvider =>
+{
+    var userRepository = serviceProvider.GetRequiredService<UserFiresbaseRepository>(); 
+    return new UserService(firebaseConfig.ApiKey, userRepository); 
+});
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Uspostavljanje HTTPS redirekcije
-//app.UseHttpsRedirection();
-
-// Omoguæavanje statièkih datoteka (npr. JavaScript, CSS)
 app.UseStaticFiles();
 
-// Omoguæavanje rutiranja
 app.UseRouting();
 
-// Omoguæavanje CORS politike
 app.UseCors("AllowAnyOrigin");
 
-// Registracija servisnog radnika (service worker)
 app.Use(async (context, next) =>
 {
     context.Response.Headers.Add("Service-Worker-Allowed", "/");
     await next();
 });
 
-// Mapiranje putanje za kontrolere
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller}/{action=Index}/{id?}");
 
-// Mapiranje putanje za fallback na index.html (za Single Page Application)
 app.MapFallbackToFile("index.html");
 
-// Pokretanje aplikacije
 app.Run();

@@ -45,6 +45,9 @@ export class NavMenu extends Component {
               <NavItem>
                 <NavLink exact tag={Link} className={navLinkClass} to="/">Home</NavLink>
               </NavItem>
+              <NavItem>
+                <NavLink exact tag={Link} className={navLinkClass} to="/registration">Registration</NavLink>
+              </NavItem>
             </ul>
           </Collapse>
           <div className="ml-auto">
