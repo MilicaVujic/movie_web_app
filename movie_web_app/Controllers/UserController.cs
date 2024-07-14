@@ -14,7 +14,7 @@ namespace movie_web_app.Controllers
         {
             _userService = userService;
         }
-        [HttpPost]
+        [HttpPost("register")]
         public async Task<ActionResult<RegistrationDto>> RegisterUser(RegistrationDto registrationDto)
         {
             try
@@ -27,6 +27,24 @@ namespace movie_web_app.Controllers
                 return Conflict(ex.Message); 
             }
         }
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDto request)
+        {
+            try
+            {
+                var authLink = await _userService.SignInWithEmailAndPasswordAsync(request.Email, request.Password);
+                string accessToken = authLink.FirebaseToken;
+                Response.Headers.Add("Authorization", $"Bearer {accessToken}");
+
+                return Ok(new { Message = "Login successful", UserId = authLink.User.LocalId });
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { Message = "Login failed", Error = ex.Message });
+            }
+        }
+
+
 
     }
 }

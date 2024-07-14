@@ -70,7 +70,7 @@ export class Home extends Component {
 
     addToFavourites = async (movieId) => {
         try {
-            const response = await axios.patch(`http://192.168.0.25:5092/api/movie/favourite/add/${movieId}`);
+            const response = await axios.patch(`http://localhost:5092/api/movie/favourite/add/${movieId}`);
             const favouriteMovies = response.data.map(movie => ({
                 ...movie,
                 favorite: true
@@ -262,8 +262,8 @@ export class Home extends Component {
 
     async populateMoviesData() {
         try {
-            const response = await axios.get('http://192.168.0.25:5092/api/movie');
-            const favouriteMoviesResponse = await axios.get('http://192.168.0.25:5092/api/movie/favourite');
+            const response = await axios.get('http://localhost:5092/api/movie');
+            const favouriteMoviesResponse = await axios.get('http://localhost:5092/api/movie/favourite');
             const favouriteMovieIds = new Set(favouriteMoviesResponse.data.map(movie => movie.id));
             const moviesWithFavorites = response.data.map(movie => ({
                 ...movie,
