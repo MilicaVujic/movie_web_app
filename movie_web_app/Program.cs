@@ -23,12 +23,12 @@ builder.Services.AddSingleton<IFirebaseClient>(serviceProvider =>
     return client;
 });
 
-=FirebaseApp.Create(new AppOptions()
-{
-    Credential = GoogleCredential.FromFile("movieapp-ecd38-firebase-adminsdk-nnh5t-854f14681d.json"),
-});
 
-=builder.Services.AddCors(options =>
+
+
+
+
+builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAnyOrigin",
         builder => builder
@@ -36,6 +36,11 @@ builder.Services.AddSingleton<IFirebaseClient>(serviceProvider =>
             .AllowAnyMethod()
             .AllowAnyHeader()
             .WithExposedHeaders("Accesstoken"));
+});
+
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile("movieapp-ecd38-firebase-adminsdk-nnh5t-854f14681d.json"),
 });
 
 builder.Services.AddHttpContextAccessor();

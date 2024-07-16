@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { TextField, Button, Typography, Link } from '@mui/material';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 const Login = () => {
@@ -72,10 +71,12 @@ const Login = () => {
             </form>
             <Typography style={{ marginTop: '10px' }}>
                 Don't have an account?{' '}
-                <Link href="/register" color="primary">
+                <Link href="/registration" color="primary">
                     Register now!
                 </Link>
             </Typography>
+            <br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br>
+            <br></br><br></br>
         </div>
     );
 };

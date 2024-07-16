@@ -15,23 +15,24 @@ const Registration = () => {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const navigate = useNavigate(); 
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Proverite da li su sva polja popunjena
+       
         if (!name || !surname || !email || !password || !confirmPassword) {
             setError('All fields are required.');
             return;
         }
 
-        // Proverite da li se lozinke poklapaju
         if (password !== confirmPassword) {
             setError('Passwords do not match.');
             return;
         }
 
-        // Proverite dužinu lozinke
+        
         if (password.length < 6) {
             setError('Password must be at least 6 characters long.');
             return;
@@ -40,12 +41,12 @@ const Registration = () => {
         const registrationData = {
             Name: name,
             Surname: surname,
-            Username: email, // Assuming Username is used as Email
+            Username: email, 
             Password: password,
         };
 
         try {
-            const response = await fetch('http://192.168.1.3:5092/api/users', {
+            const response = await fetch('http://192.168.0.25:5092/api/users/register', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -53,7 +54,7 @@ const Registration = () => {
                 body: JSON.stringify(registrationData),
             });
 
-            if (response.status === 409) { // Handle conflict status
+            if (response.status === 409) { 
                 setError('Email already exists.');
                 return;
             }
@@ -69,6 +70,7 @@ const Registration = () => {
             setPassword('');
             setConfirmPassword('');
             setError('');
+            navigate("/login")
         } catch (err) {
             setError(err.message);
             setSuccess('');
@@ -129,6 +131,7 @@ const Registration = () => {
                     Register
                 </Button>
             </form>
+            <br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br>
         </Container>
     );
 };
