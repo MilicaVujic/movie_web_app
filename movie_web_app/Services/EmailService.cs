@@ -1,9 +1,8 @@
-﻿namespace movie_web_app.Services
-{
-    using MailKit.Net.Smtp;
-    using MimeKit;
-    using Microsoft.Extensions.Configuration;
+﻿using MailKit.Net.Smtp;
+using MimeKit;
 
+namespace movie_web_app.Services
+{
     public class EmailService
     {
         private readonly IConfiguration _configuration;
@@ -24,18 +23,18 @@
 
             using (var client = new SmtpClient())
             {
-                await client.ConnectAsync("smtp.gmail.com",
-                                          587,
-                                          MailKit.Security.SecureSocketOptions.StartTls);
+                await client.ConnectAsync(
+                    _configuration["SmtpSettings:Host"],
+                    int.Parse(_configuration["SmtpSettings:Port"]),
+                    MailKit.Security.SecureSocketOptions.StartTls);
 
                 await client.AuthenticateAsync(
-                    "medicinskaopremaisa@gmail.com",
-                    "xqxbjlapbjmiygcy");
+                    _configuration["SmtpSettings:Username"],
+                    _configuration["SmtpSettings:Password"]);
 
                 await client.SendAsync(message);
                 await client.DisconnectAsync(true);
             }
         }
     }
-
 }
