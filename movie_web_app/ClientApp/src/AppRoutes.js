@@ -3,6 +3,7 @@ import MovieDetails from "./components/MovieDetails";
 import Registration from "./components/Registration";
 import Login from "./components/Login";
 import UserAccount from "./components/UserAccount";
+import ResetPassword from "./components/ResetPassword";
 
 
 const AppRoutes = [
@@ -25,6 +26,10 @@ const AppRoutes = [
   {
     path:"/account",
     element: <UserAccount/>
+  },
+  {
+    path:"/resetpassword",
+    element: <ResetPassword/>
   }
 ];
 

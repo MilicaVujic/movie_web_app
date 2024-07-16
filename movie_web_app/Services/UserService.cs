@@ -1,11 +1,12 @@
 ﻿using Firebase.Auth;
+using FirebaseAdmin.Auth;
 using movie_web_app.Dtos;
 using movie_web_app.Repositories;
 using System.Security.Claims;
 
 namespace movie_web_app.Services
 {
-    public class UserService:IUserService
+    public class UserService : IUserService
     {
         private readonly FirebaseAuthProvider _authProvider;
         private readonly UserFiresbaseRepository _userRepository;
@@ -25,11 +26,11 @@ namespace movie_web_app.Services
 
         private async Task<FirebaseAuthLink> CreateUser(string email, string password)
         {
-            return await _authProvider.CreateUserWithEmailAndPasswordAsync(email,password);
+            return await _authProvider.CreateUserWithEmailAndPasswordAsync(email, password);
         }
         public async Task<RegistrationDto> CreateUser(RegistrationDto registrationDto)
         {
-            bool userExists = await _userRepository.DoesUserExistAsync(registrationDto.Username); 
+            bool userExists = await _userRepository.DoesUserExistAsync(registrationDto.Username);
             if (userExists)
             {
                 throw new Exception("Email already exists.");
@@ -42,29 +43,29 @@ namespace movie_web_app.Services
             return registrationDto;
         }
 
-         public async Task<ClaimsPrincipal> AuthenticateWithFirebaseToken(string token)
-    {
-        try
+        public async Task<ClaimsPrincipal> AuthenticateWithFirebaseToken(string token)
         {
-            var decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
-            var claims = new List<Claim>
+            try
+            {
+                var decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
+                var claims = new List<Claim>
             {
                 new Claim(ClaimTypes.NameIdentifier, decodedToken.Uid),
             };
 
-            var claimsIdentity = new ClaimsIdentity(claims, "Firebase");
-            return new ClaimsPrincipal(claimsIdentity);
+                var claimsIdentity = new ClaimsIdentity(claims, "Firebase");
+                return new ClaimsPrincipal(claimsIdentity);
+            }
+            catch (Exception ex)
+            {
+                throw new UnauthorizedAccessException("Invalid Firebase token", ex);
+            }
         }
-        catch (Exception ex)
-        {
-            throw new UnauthorizedAccessException("Invalid Firebase token", ex);
-        }
-    }
 
         public async Task<UserDto> GetUser(string userId)
         {
             Models.User user = await _userRepository.GetUserAsync(userId);
-            return new UserDto(user.Name,user.Surname,user.Username);
+            return new UserDto(user.Name, user.Surname, user.Username);
         }
 
         public async Task<UserDto> UpdateUser(string userId, string name, string surname)
@@ -74,7 +75,6 @@ namespace movie_web_app.Services
             user.Name = name;
             await _userRepository.UpdateUser(userId, user);
             return await GetUser(userId);
-
         }
     }
 

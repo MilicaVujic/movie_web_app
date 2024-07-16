@@ -118,6 +118,36 @@ namespace movie_web_app.Repositories
             }
             return false;
         }
+        public async Task<User> GetUserByUsername(string username)
+        {
+            try
+            {
+                FirebaseResponse response = await _client.GetAsync("users");
+                var users = JObject.Parse(response.Body);
+
+                foreach (var user in users)
+                {
+                    if (user.Value["Username"].ToString().Equals(username, StringComparison.OrdinalIgnoreCase))
+                    {
+
+                        return new User(
+                            user.Key, 
+                            user.Value["Name"].ToString(),
+                            user.Value["Surname"].ToString(),
+                            user.Value["Username"].ToString(),
+                            new List<string>()
+                        );
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+
+            return null; 
+        }
 
 
     }

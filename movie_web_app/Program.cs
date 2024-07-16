@@ -44,6 +44,7 @@ builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<MovieFirebaseRepository>();
 builder.Services.AddScoped<ActorFirebaseRepository>();
 builder.Services.AddScoped<UserFiresbaseRepository>();
+builder.Services.AddScoped<EmailService>();
 
 builder.Services.AddScoped<IUserService>(serviceProvider =>
 {

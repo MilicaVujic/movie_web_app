@@ -28,16 +28,12 @@ const Login = () => {
                 throw new Error('Login failed');
             }
         
-            console.log(response)
             const token = response.headers.get('Accesstoken'); 
-            console.log(token);
             localStorage.setItem('accessToken', token);
-            console.log(localStorage.getItem("accessToken"));
             navigate('/home'); 
         } catch (err) {
             setError('Login failed. Please check your credentials.');
         }
-        
     };
 
     return (
@@ -74,8 +70,14 @@ const Login = () => {
                     Register now!
                 </Link>
             </Typography>
-            <br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br><br></br>
-            <br></br><br></br>
+            <Typography style={{ marginTop: '10px' }}>
+                <Link href="/resetpassword" color="primary">
+                    Forgot Password? Click for reset
+                </Link>
+            </Typography>
+            <br></br><br></br><br></br><br></br>
+            <br></br><br></br><br></br><br></br>
+            <br></br><br></br><br></br><br></br>
         </div>
     );
 };

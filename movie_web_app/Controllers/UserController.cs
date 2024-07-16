@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FirebaseAdmin.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using movie_web_app.Dtos;
 using movie_web_app.Services;
@@ -11,10 +12,12 @@ namespace movie_web_app.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private EmailService _emailService;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, EmailService emailService)
         {
             _userService = userService;
+            _emailService = emailService;
         }
         [HttpPost("register")]
         public async Task<ActionResult<RegistrationDto>> RegisterUser(RegistrationDto registrationDto)
@@ -76,6 +79,24 @@ namespace movie_web_app.Controllers
             catch (Exception ex)
             {
                 return Conflict(ex.Message);
+            }
+        }
+        [HttpPost("send-reset-email")]
+        public async Task<IActionResult> SendResetEmail([FromBody] ResetPasswordRequest request)
+        {
+            try
+            {
+                var link = await FirebaseAuth.DefaultInstance.GeneratePasswordResetLinkAsync(request.Email);
+                var subject = "Reset your password";
+                var body = $"<p>To reset your password, click the link below:</p><p><a href='{link}'>{link}</a></p>";
+
+                await _emailService.SendEmailAsync(request.Email, subject, body);
+
+                return Ok("Reset password email sent.");
+            }
+            catch (FirebaseAuthException ex)
+            {
+                return BadRequest($"Error: {ex.Message}");
             }
         }
 

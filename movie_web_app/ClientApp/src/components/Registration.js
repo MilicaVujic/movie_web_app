@@ -6,6 +6,8 @@ import {
     Typography,
     Alert,
 } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
+
 
 const Registration = () => {
     const [name, setName] = useState('');
@@ -70,7 +72,7 @@ const Registration = () => {
             setPassword('');
             setConfirmPassword('');
             setError('');
-            navigate("/login")
+            navigate("/")
         } catch (err) {
             setError(err.message);
             setSuccess('');
