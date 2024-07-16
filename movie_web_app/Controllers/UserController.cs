@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using movie_web_app.Dtos;
 using movie_web_app.Services;
+using System.Security.Claims;
 
 namespace movie_web_app.Controllers
 {
@@ -41,8 +43,41 @@ namespace movie_web_app.Controllers
                 return BadRequest(new { Message = "Login failed", Error = ex.Message });
             }
         }
+        [HttpGet]
+        [Authorize]
+        public async Task<ActionResult<UserDto>> GetUser()
+        {
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var createdUser = await _userService.GetUser(userId);
+                return Ok(createdUser);
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
 
-
+        [HttpPatch]
+        [Authorize]
+        public async Task<ActionResult<UserDto>> UpdateUser([FromBody] UpdateUserDto userDto)
+        {
+            if (userDto == null)
+            {
+                return BadRequest("Invalid user data.");
+            }
+            try
+            {
+                var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+                var updatedUser = await _userService.UpdateUser(userId, userDto.Name, userDto.Surname);
+                return Ok(updatedUser);
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
 
     }
 }

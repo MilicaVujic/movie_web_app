@@ -1,9 +1,6 @@
 ﻿using Firebase.Auth;
-using FirebaseAdmin.Auth;
-using Microsoft.AspNetCore.Http;
 using movie_web_app.Dtos;
 using movie_web_app.Repositories;
-using Newtonsoft.Json.Linq;
 using System.Security.Claims;
 
 namespace movie_web_app.Services
@@ -12,13 +9,11 @@ namespace movie_web_app.Services
     {
         private readonly FirebaseAuthProvider _authProvider;
         private readonly UserFiresbaseRepository _userRepository;
-        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(string apiKey, UserFiresbaseRepository userFiresbaseRepository, IHttpContextAccessor httpContextAccessor)
+        public UserService(string apiKey, UserFiresbaseRepository userFiresbaseRepository)
         {
             _authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
             _userRepository = userFiresbaseRepository;
-            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<FirebaseAuthLink> SignInWithEmailAndPasswordAsync(string email, string password)
@@ -65,6 +60,22 @@ namespace movie_web_app.Services
             throw new UnauthorizedAccessException("Invalid Firebase token", ex);
         }
     }
+
+        public async Task<UserDto> GetUser(string userId)
+        {
+            Models.User user = await _userRepository.GetUserAsync(userId);
+            return new UserDto(user.Name,user.Surname,user.Username);
+        }
+
+        public async Task<UserDto> UpdateUser(string userId, string name, string surname)
+        {
+            Models.User user = await _userRepository.GetUserAsync(userId);
+            user.Surname = surname;
+            user.Name = name;
+            await _userRepository.UpdateUser(userId, user);
+            return await GetUser(userId);
+
+        }
     }
 
 

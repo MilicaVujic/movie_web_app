@@ -39,7 +39,18 @@ namespace movie_web_app.Repositories
                 return null;
             }
         }
-
+        public async Task UpdateUser(string userId, User user)
+        {
+            try
+            {
+                await _client.UpdateAsync($"users/{userId}", user);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error: {ex.Message}");
+                throw;
+            }
+        }
         public async Task AddFavoriteMovie(string userId, string movieId)
         {
             try

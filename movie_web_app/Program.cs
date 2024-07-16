@@ -23,11 +23,6 @@ builder.Services.AddSingleton<IFirebaseClient>(serviceProvider =>
     return client;
 });
 
-
-
-
-
-
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAnyOrigin",
@@ -53,8 +48,7 @@ builder.Services.AddScoped<UserFiresbaseRepository>();
 builder.Services.AddScoped<IUserService>(serviceProvider =>
 {
     var userRepository = serviceProvider.GetRequiredService<UserFiresbaseRepository>();
-    var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
-    return new UserService(firebaseConfig.ApiKey, userRepository, httpContextAccessor);
+    return new UserService(firebaseConfig.ApiKey, userRepository);
 });
 
 builder.Services.AddControllersWithViews();

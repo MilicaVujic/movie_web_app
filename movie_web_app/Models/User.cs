@@ -3,8 +3,8 @@
     public class User
     {
         public string Id { get; private set; }
-        public string Name { get; private set; }
-        public string Surname { get; private set; }
+        public string Name { get;  set; }
+        public string Surname { get;  set; }
         public string Username { get; private set; }
         public List<string> FavouriteMoviesIds { get;  set; }
         public User(string id, string name, string surname, string username, List<string> favouriteMoviesIds)

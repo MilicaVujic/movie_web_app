@@ -2,6 +2,8 @@ import { Home } from "./components/Home";
 import MovieDetails from "./components/MovieDetails";
 import Registration from "./components/Registration";
 import Login from "./components/Login";
+import UserAccount from "./components/UserAccount";
+
 
 const AppRoutes = [
   {
@@ -15,9 +17,14 @@ const AppRoutes = [
   {
     path: "/movie/:id",
     element: <MovieDetails />
-  },{
+  },
+  {
     path:"/registration",
     element: <Registration/>
+  },
+  {
+    path:"/account",
+    element: <UserAccount/>
   }
 ];
 

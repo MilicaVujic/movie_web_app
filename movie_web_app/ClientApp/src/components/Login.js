@@ -33,7 +33,6 @@ const Login = () => {
             console.log(token);
             localStorage.setItem('accessToken', token);
             console.log(localStorage.getItem("accessToken"));
-            alert('Login successful');
             navigate('/home'); 
         } catch (err) {
             setError('Login failed. Please check your credentials.');

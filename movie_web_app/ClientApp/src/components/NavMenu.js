@@ -28,6 +28,9 @@ const NavMenu = ({ currentTheme, toggleTheme }) => {
             <NavItem>
               <NavLink exact tag={Link} className={navLinkClass} to="/home">Home</NavLink>
             </NavItem>
+            <NavItem>
+              <NavLink exact tag={Link} className={navLinkClass} to="/account">Account</NavLink>
+            </NavItem>
           </ul>
         </Collapse>
         <div className="ml-auto">
