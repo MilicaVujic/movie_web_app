@@ -67,10 +67,15 @@ export class Home extends Component {
         this.setState({ movies: updatedMovies, favouriteMovies });
         localStorage.setItem("movies", JSON.stringify(updatedMovies));
     }
-
     addToFavourites = async (movieId) => {
         try {
-            const response = await axios.patch(`http://localhost:5092/api/movie/favourite/add/${movieId}`);
+            const token = localStorage.getItem('accessToken'); 
+
+            const response = await axios.patch(`http://192.168.0.25:5092/api/movie/favourite/add/${movieId}`, null, {
+                headers: {
+                    Authorization: `Bearer ${token}`, 
+                },
+            });
             const favouriteMovies = response.data.map(movie => ({
                 ...movie,
                 favorite: true
@@ -84,7 +89,12 @@ export class Home extends Component {
 
     removeFavourites = async (movieId) => {
         try {
-            const response = await axios.patch(`http://192.168.0.25:5092/api/movie/favourite/remove/${movieId}`);
+            const token = localStorage.getItem('accessToken'); 
+            const response = await axios.patch(`http://192.168.0.25:5092/api/movie/favourite/remove/${movieId}`,null, {
+                headers: {
+                    Authorization: `Bearer ${token}`, 
+                },
+            });
             const favouriteMovies = response.data.map(movie => ({
                 ...movie,
                 favorite: true
@@ -262,8 +272,20 @@ export class Home extends Component {
 
     async populateMoviesData() {
         try {
-            const response = await axios.get('http://localhost:5092/api/movie');
-            const favouriteMoviesResponse = await axios.get('http://localhost:5092/api/movie/favourite');
+            const token = localStorage.getItem('accessToken'); 
+
+            const response = await axios.get('http://192.168.0.25:5092/api/movie', {
+                headers: {
+                    Authorization: `Bearer ${token}`, 
+                },
+            });
+            
+            const favouriteMoviesResponse = await axios.get('http://192.168.0.25:5092/api/movie/favourite', {
+                headers: {
+                    Authorization: `Bearer ${token}`, 
+                },
+            });
+            
             const favouriteMovieIds = new Set(favouriteMoviesResponse.data.map(movie => movie.id));
             const moviesWithFavorites = response.data.map(movie => ({
                 ...movie,

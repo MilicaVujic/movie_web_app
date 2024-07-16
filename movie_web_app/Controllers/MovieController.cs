@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using movie_web_app.Dtos;
 using movie_web_app.Services;
+using System.Security.Claims;
 
 namespace movie_web_app.Controllers
 {
@@ -15,6 +17,7 @@ namespace movie_web_app.Controllers
             _movieService = movieService;
         }
         [HttpGet]
+        [Authorize]
         public async Task<IEnumerable<MovieDto>> Get()
         {
             return await _movieService.GetAll();
@@ -25,19 +28,25 @@ namespace movie_web_app.Controllers
             return await _movieService.GetById(id);
         }
         [HttpPatch("favourite/add/{id}")]
+        [Authorize]
         public async Task<IEnumerable<MovieDto>> AddToFavouries(string id)
         {
-            return await _movieService.AddToFavourites(id);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return await _movieService.AddToFavorites(userId,id);
         }
         [HttpPatch("favourite/remove/{id}")]
+        [Authorize]
         public async Task<IEnumerable<MovieDto>> RemoveFromFavouries(string id)
         {
-            return await _movieService.RemoveFromFavourites(id);
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return await _movieService.RemoveFromFavorites(userId,id);
         }
         [HttpGet("favourite")]
+        [Authorize]
         public async Task<IEnumerable<MovieDto>> GetFavouriteMovies()
         {
-            return await _movieService.GetFavouriteMovies();
+            var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            return await _movieService.GetFavoriteMovies(userId);
         }
     }
 }

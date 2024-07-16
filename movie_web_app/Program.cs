@@ -1,10 +1,9 @@
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 using movie_web_app.Repositories;
 using movie_web_app.Services;
-using FireSharp.Config;
 using FireSharp.Interfaces;
-using FireSharp;
 using movie_web_app;
-using Firebase.Auth;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,15 +23,22 @@ builder.Services.AddSingleton<IFirebaseClient>(serviceProvider =>
     return client;
 });
 
+=FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile("movieapp-ecd38-firebase-adminsdk-nnh5t-854f14681d.json"),
+});
 
-builder.Services.AddCors(options =>
+=builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAnyOrigin",
         builder => builder
             .AllowAnyOrigin()
             .AllowAnyMethod()
-            .AllowAnyHeader());
+            .AllowAnyHeader()
+            .WithExposedHeaders("Accesstoken"));
 });
+
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddScoped<IMovieService, MovieService>();
 builder.Services.AddScoped<MovieFirebaseRepository>();
@@ -41,8 +47,9 @@ builder.Services.AddScoped<UserFiresbaseRepository>();
 
 builder.Services.AddScoped<IUserService>(serviceProvider =>
 {
-    var userRepository = serviceProvider.GetRequiredService<UserFiresbaseRepository>(); 
-    return new UserService(firebaseConfig.ApiKey, userRepository); 
+    var userRepository = serviceProvider.GetRequiredService<UserFiresbaseRepository>();
+    var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+    return new UserService(firebaseConfig.ApiKey, userRepository, httpContextAccessor);
 });
 
 builder.Services.AddControllersWithViews();
@@ -50,16 +57,35 @@ builder.Services.AddControllersWithViews();
 var app = builder.Build();
 
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseCors("AllowAnyOrigin");
 
 app.Use(async (context, next) =>
 {
-    context.Response.Headers.Add("Service-Worker-Allowed", "/");
+    var authHeader = context.Request.Headers["Authorization"].FirstOrDefault();
+    if (authHeader != null && authHeader.StartsWith("Bearer "))
+    {
+        var token = authHeader.Substring("Bearer ".Length).Trim();
+        var userService = context.RequestServices.GetRequiredService<IUserService>();
+
+        try
+        {
+            var user = await userService.AuthenticateWithFirebaseToken(token);
+            context.User = user; 
+        }
+        catch (UnauthorizedAccessException)
+        {
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+            return;
+        }
+    }
+
     await next();
 });
+
+
+app.UseAuthentication();
+app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",

@@ -7,25 +7,39 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
-    const navigate = useNavigate(); // Koristi useNavigate
+    const navigate = useNavigate(); 
 
     const handleLogin = async (e) => {
         e.preventDefault();
         setError('');
 
         try {
-            const response = await axios.post('http://localhost:5092/api/users/login', {
-                email,
-                password,
+            const response = await fetch('http://192.168.0.25:5092/api/users/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                })
             });
-
-            const token = response.headers['authorization'];
+        
+            if (!response.ok) {
+                throw new Error('Login failed');
+            }
+        
+            console.log(response)
+            const token = response.headers.get('Accesstoken'); 
+            console.log(token);
             localStorage.setItem('accessToken', token);
+            console.log(localStorage.getItem("accessToken"));
             alert('Login successful');
-            navigate('/home'); // Redirekcija na /home
+            navigate('/home'); 
         } catch (err) {
             setError('Login failed. Please check your credentials.');
         }
+        
     };
 
     return (

@@ -16,10 +16,10 @@ namespace movie_web_app.Services
             _userRepository = userRepository;
         }
 
-        public async Task<List<MovieDto>> AddToFavourites(string id)
+        public async Task<List<MovieDto>> AddToFavorites(string userId, string id)
         {
-            await _userRepository.AddFavoriteMovie("1", id);
-            return await GetFavouriteMovies();
+            await _userRepository.AddFavoriteMovie(userId, id);
+            return await GetFavoriteMovies(userId);
         }
 
         public async Task<List<MovieDto>> GetAll()
@@ -54,10 +54,10 @@ namespace movie_web_app.Services
             return movieDto;
         }
 
-        public async Task<List<MovieDto>> GetFavouriteMovies()
+        public async Task<List<MovieDto>> GetFavoriteMovies(string userId)
         {
             List<Movie> movies = new List<Movie>();
-            User user = await _userRepository.GetUserAsync("1");
+            User user = await _userRepository.GetUserAsync(userId);
             foreach(var movieId in user.FavouriteMoviesIds)
             {
                 Movie movie= await _movieRepository.GetMovieById(movieId);
@@ -67,10 +67,10 @@ namespace movie_web_app.Services
 
         }
 
-        public async Task<List<MovieDto>> RemoveFromFavourites(string id)
+        public async Task<List<MovieDto>> RemoveFromFavorites(string userId, string id)
         {
-            await _userRepository.RemoveFavoriteMovie("1", id);
-            return await GetFavouriteMovies();
+            await _userRepository.RemoveFavoriteMovie(userId, id);
+            return await GetFavoriteMovies(userId);
         }
 
         private async Task<List<MovieDto>> MapMoviesToDtos(List<Movie> movies)

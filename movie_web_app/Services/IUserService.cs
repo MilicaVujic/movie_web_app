@@ -1,5 +1,6 @@
 ﻿using Firebase.Auth;
 using movie_web_app.Dtos;
+using System.Security.Claims;
 
 namespace movie_web_app.Services
 {
@@ -7,7 +8,7 @@ namespace movie_web_app.Services
     {
         public Task<FirebaseAuthLink> SignInWithEmailAndPasswordAsync(string email, string password);
         public Task<RegistrationDto> CreateUser(RegistrationDto registrationDto);
-
+        public Task<ClaimsPrincipal> AuthenticateWithFirebaseToken(string token);
 
     }
 }

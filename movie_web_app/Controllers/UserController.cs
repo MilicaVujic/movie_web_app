@@ -33,9 +33,7 @@ namespace movie_web_app.Controllers
             try
             {
                 var authLink = await _userService.SignInWithEmailAndPasswordAsync(request.Email, request.Password);
-                string accessToken = authLink.FirebaseToken;
-                Response.Headers.Add("Authorization", $"Bearer {accessToken}");
-
+                Response.Headers.Add("Accesstoken", $"{authLink.FirebaseToken}");
                 return Ok(new { Message = "Login successful", UserId = authLink.User.LocalId });
             }
             catch (Exception ex)

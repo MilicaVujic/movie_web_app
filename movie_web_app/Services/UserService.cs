@@ -1,6 +1,10 @@
 ﻿using Firebase.Auth;
+using FirebaseAdmin.Auth;
+using Microsoft.AspNetCore.Http;
 using movie_web_app.Dtos;
 using movie_web_app.Repositories;
+using Newtonsoft.Json.Linq;
+using System.Security.Claims;
 
 namespace movie_web_app.Services
 {
@@ -8,18 +12,20 @@ namespace movie_web_app.Services
     {
         private readonly FirebaseAuthProvider _authProvider;
         private readonly UserFiresbaseRepository _userRepository;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-
-
-        public UserService(string apiKey, UserFiresbaseRepository userFiresbaseRepository)
+        public UserService(string apiKey, UserFiresbaseRepository userFiresbaseRepository, IHttpContextAccessor httpContextAccessor)
         {
             _authProvider = new FirebaseAuthProvider(new FirebaseConfig(apiKey));
             _userRepository = userFiresbaseRepository;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<FirebaseAuthLink> SignInWithEmailAndPasswordAsync(string email, string password)
         {
-            return await _authProvider.SignInWithEmailAndPasswordAsync(email, password);
+            var authLink = await _authProvider.SignInWithEmailAndPasswordAsync(email, password);
+
+            return authLink;
         }
 
         private async Task<FirebaseAuthLink> CreateUser(string email, string password)
@@ -41,5 +47,25 @@ namespace movie_web_app.Services
             return registrationDto;
         }
 
+         public async Task<ClaimsPrincipal> AuthenticateWithFirebaseToken(string token)
+    {
+        try
+        {
+            var decodedToken = await FirebaseAdmin.Auth.FirebaseAuth.DefaultInstance.VerifyIdTokenAsync(token);
+            var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.NameIdentifier, decodedToken.Uid),
+            };
+
+            var claimsIdentity = new ClaimsIdentity(claims, "Firebase");
+            return new ClaimsPrincipal(claimsIdentity);
+        }
+        catch (Exception ex)
+        {
+            throw new UnauthorizedAccessException("Invalid Firebase token", ex);
+        }
     }
+    }
+
+
 }

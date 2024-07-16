@@ -21,12 +21,17 @@ namespace movie_web_app.Repositories
             if (response.Body != "null")
             {
                 JObject jsonObject = JObject.Parse(response.Body);
-                if (response.Body.Contains("FavouriteMoviesIds")) {
-                    user = new User(userId, jsonObject["Name"].ToString(), jsonObject["Surname"].ToString(), jsonObject["Username"].ToString(),  jsonObject["FavouriteMoviesIds"].ToObject<List<string>>());
-                }
-                else {
-                    user = new User(userId, jsonObject["Name"].ToString(), jsonObject["Surname"].ToString(), jsonObject["Username"].ToString(),  new List<string>());
-                }
+                List<string> favoriteMoviesIds = jsonObject.ContainsKey("FavouriteMoviesIds")
+               ? jsonObject["FavouriteMoviesIds"].ToObject<List<string>>()
+               : new List<string>(); 
+
+                user = new User(
+                    userId,
+                    jsonObject["Name"].ToString(),
+                    jsonObject["Surname"].ToString(),
+                    jsonObject["Username"].ToString(),
+                    favoriteMoviesIds
+                );
                 return user;
             }
             else

@@ -1,6 +1,6 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const target = "https://localhost:44430"; // Postavi target na ciljni server
+const target = "https://192.168.0.25:44430"; // Postavi target na ciljni server
 
 const context = ['/api']; // Definiraj context na kojim putanjama želiš primjenjivati proxy
 
@@ -13,10 +13,10 @@ module.exports = function (app) {
         target: target,
         onError: onError,
         proxyTimeout: 10000,
-        secure: false, // Ako je potrebno, privremeno postavi na false za testiranje
+        secure: false, 
         headers: {
-            Connection: 'Keep-Alive'
-        }
+            Connection: 'Keep-Alive',
+                }
     });
 
     app.use(appProxy);
