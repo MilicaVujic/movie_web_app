@@ -1,8 +1,8 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
-const target = "https://192.168.0.25:44430"; // Postavi target na ciljni server
+const target = "https://192.168.0.25:44430"; 
 
-const context = ['/api']; // Definiraj context na kojim putanjama želiš primjenjivati proxy
+const context = ['/api']; 
 
 const onError = (err, req, resp, target) => {
     console.error(`${err.message}`);

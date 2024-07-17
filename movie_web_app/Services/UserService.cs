@@ -1,11 +1,7 @@
 ﻿using Firebase.Auth;
-using FirebaseAdmin.Auth;
 using movie_web_app.Dtos;
-using movie_web_app.Models;
 using movie_web_app.Repositories;
-using Org.BouncyCastle.Asn1.Ocsp;
 using System.Security.Claims;
-using System.Xml.Linq;
 
 namespace movie_web_app.Services
 {
