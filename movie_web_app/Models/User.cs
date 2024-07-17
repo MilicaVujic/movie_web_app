@@ -6,8 +6,9 @@
         public string Name { get;  set; }
         public string Surname { get;  set; }
         public string Username { get; private set; }
+        public bool IsVerified { get; set; }
         public List<string> FavouriteMoviesIds { get;  set; }
-        public User(string id, string name, string surname, string username, List<string> favouriteMoviesIds)
+        public User(string id, string name, string surname, string username, List<string> favouriteMoviesIds, bool isVerified)
         {
             AreFieldsEmpty(id, name, surname, username);
 
@@ -16,6 +17,7 @@
             this.Surname = surname;
             this.Username = username;
             this.FavouriteMoviesIds = favouriteMoviesIds;
+            this.IsVerified = isVerified;
         }
 
         private static void AreFieldsEmpty(string id, string name, string surname, string username)

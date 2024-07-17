@@ -100,5 +100,20 @@ namespace movie_web_app.Controllers
             }
         }
 
+        [HttpGet("verify/{email}")]
+        public async Task<ActionResult<String>> VerifyUser(string email)
+        { 
+            try
+            {
+                var updatedUser = await _userService.VerifyUser(email);
+                return Ok("successfully verified user " + updatedUser.Name+" "+updatedUser.Surname);
+            }
+            catch (Exception ex)
+            {
+                return Conflict(ex.Message);
+            }
+        }
+
+
     }
 }

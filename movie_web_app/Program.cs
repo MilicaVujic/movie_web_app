@@ -49,7 +49,8 @@ builder.Services.AddScoped<EmailService>();
 builder.Services.AddScoped<IUserService>(serviceProvider =>
 {
     var userRepository = serviceProvider.GetRequiredService<UserFiresbaseRepository>();
-    return new UserService(firebaseConfig.ApiKey, userRepository);
+    var emailService = serviceProvider.GetRequiredService<EmailService>();
+    return new UserService(firebaseConfig.ApiKey, userRepository,emailService);
 });
 
 builder.Services.AddControllersWithViews();

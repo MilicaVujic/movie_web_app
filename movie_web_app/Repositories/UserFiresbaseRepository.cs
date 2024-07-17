@@ -30,7 +30,8 @@ namespace movie_web_app.Repositories
                     jsonObject["Name"].ToString(),
                     jsonObject["Surname"].ToString(),
                     jsonObject["Username"].ToString(),
-                    favoriteMoviesIds
+                    favoriteMoviesIds,
+                    jsonObject["IsVerified"].ToString().Equals("True")?true:false
                 );
                 return user;
             }
@@ -129,13 +130,13 @@ namespace movie_web_app.Repositories
                 {
                     if (user.Value["Username"].ToString().Equals(username, StringComparison.OrdinalIgnoreCase))
                     {
-
                         return new User(
                             user.Key, 
                             user.Value["Name"].ToString(),
                             user.Value["Surname"].ToString(),
                             user.Value["Username"].ToString(),
-                            new List<string>()
+                            new List<string>(),
+                            user.Value["IsVerified"].ToString().Equals("True") ? true : false
                         );
                     }
                 }

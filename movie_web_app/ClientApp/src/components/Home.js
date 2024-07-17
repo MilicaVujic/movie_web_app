@@ -265,7 +265,7 @@ export class Home extends Component {
                 </div>
                 <br />
                 {contents}
-                <br /><br></br><br></br><br></br>
+                <br /><br></br><br></br><br></br><br></br><br></br>
             </div>
         );
     }

@@ -11,6 +11,7 @@ namespace movie_web_app.Services
         public Task<ClaimsPrincipal> AuthenticateWithFirebaseToken(string token);
         public Task<UserDto> GetUser(string userId);
         public Task<UserDto> UpdateUser(string userId, string name, string surname);
+        public Task<UserDto> VerifyUser (string email);
 
 
 
