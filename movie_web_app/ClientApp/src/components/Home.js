@@ -71,7 +71,7 @@ export class Home extends Component {
         try {
             const token = localStorage.getItem('accessToken'); 
 
-            const response = await axios.patch(`http://192.168.0.25:5092/api/movie/favourite/add/${movieId}`, null, {
+            const response = await axios.patch(`http://localhost:5092/api/movie/favourite/add/${movieId}`, null, {
                 headers: {
                     Authorization: `Bearer ${token}`, 
                 },
@@ -90,7 +90,7 @@ export class Home extends Component {
     removeFavourites = async (movieId) => {
         try {
             const token = localStorage.getItem('accessToken'); 
-            const response = await axios.patch(`http://192.168.0.25:5092/api/movie/favourite/remove/${movieId}`,null, {
+            const response = await axios.patch(`http://localhost:5092/api/movie/favourite/remove/${movieId}`,null, {
                 headers: {
                     Authorization: `Bearer ${token}`, 
                 },
@@ -274,13 +274,13 @@ export class Home extends Component {
         try {
             const token = localStorage.getItem('accessToken'); 
 
-            const response = await axios.get('http://192.168.0.25:5092/api/movie', {
+            const response = await axios.get('http://localhost:5092/api/movie', {
                 headers: {
                     Authorization: `Bearer ${token}`, 
                 },
             });
             
-            const favouriteMoviesResponse = await axios.get('http://192.168.0.25:5092/api/movie/favourite', {
+            const favouriteMoviesResponse = await axios.get('http://localhost:5092/api/movie/favourite', {
                 headers: {
                     Authorization: `Bearer ${token}`, 
                 },

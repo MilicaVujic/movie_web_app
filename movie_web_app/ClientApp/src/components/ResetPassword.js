@@ -9,7 +9,7 @@ const ResetPassword = () => {
         e.preventDefault();
 
         try {
-            const response = await fetch('http://192.168.0.25:5092/api/users/send-reset-email', {
+            const response = await fetch('http://localhost:5092/api/users/send-reset-email', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

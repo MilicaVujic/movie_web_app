@@ -11,7 +11,7 @@ const UserAccount = () => {
         const fetchUserData = async () => {
             try {
                 const token = localStorage.getItem('accessToken');
-                const response = await axios.get('http://192.168.0.25:5092/api/users', {
+                const response = await axios.get('http://localhost:5092/api/users', {
                     headers: {
                         Authorization: `Bearer ${token}`
                     }
@@ -34,7 +34,7 @@ const UserAccount = () => {
     const handleUpdate = async () => {
         try {
             const token = localStorage.getItem('accessToken');
-            await axios.patch('http://192.168.0.25:5092/api/users', {
+            await axios.patch('http://localhost:5092/api/users', {
                 name: user.name,                  
                 surname: user.surname
             },

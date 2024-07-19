@@ -11,7 +11,7 @@
     "movie_web_app": {
       "commandName": "Project",
       "launchBrowser": true,
-      "applicationUrl": "https://localhost:7004;http://192.168.0.25:5092",
+      "applicationUrl": "https://localhost:7004;http://localhost:5092",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
         "ASPNETCORE_HOSTINGSTARTUPASSEMBLIES": "Microsoft.AspNetCore.SpaProxy"

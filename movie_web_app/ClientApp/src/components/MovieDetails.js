@@ -22,7 +22,7 @@ function MovieDetails() {
     useEffect(() => {
         const fetchMovie = async () => {
             try {
-                const response = await axios.get(`http://192.168.0.25:5092/api/movie/${id}`);
+                const response = await axios.get(`http://localhost:5092/api/movie/${id}`);
                 console.log('Movie details:', response.data);
                 setMovie(response.data);
                 setLoading(false);
