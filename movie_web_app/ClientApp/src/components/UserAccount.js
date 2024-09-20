@@ -21,8 +21,18 @@ const UserAccount = () => {
                     surname: response.data.surname,
                     username: response.data.username
                 });
+                localStorage.setItem("account", JSON.stringify(response.data));
+
             } catch (err) {
-                setError('Error fetching user data');
+                //setError('Error fetching user data');
+                console.log(JSON.parse(localStorage.getItem("account")).name)
+                setUser({
+                    name: JSON.parse(localStorage.getItem("account")).name,         
+                    surname: JSON.parse(localStorage.getItem("account")).surname,
+                    username: JSON.parse(localStorage.getItem("account")).username
+                });
+                setLoading(false);
+
             } finally {
                 setLoading(false);
             }

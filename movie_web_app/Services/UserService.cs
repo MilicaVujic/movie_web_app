@@ -48,9 +48,9 @@ namespace movie_web_app.Services
             var firebaseAuthUser = await CreateUser(registrationDto.Username, registrationDto.Password);
             Models.User user = new Models.User(firebaseAuthUser.User.LocalId.ToString(), registrationDto.Name, registrationDto.Surname, registrationDto.Username, new List<string>(),false);
             await _userRepository.CreateUserAsync(user);
-            var verificationUrl = $"http://192.168.0.25:5092/api/users/verify/{registrationDto.Username}";
+            var verificationUrl = $"http://localhost:5092/api/users/verify/{registrationDto.Username}";
             var subject = "Verify account";
-            var body = $"<p>To reset your account, click the link below:</p><p><a href='{verificationUrl}'>{verificationUrl}</a></p>";
+            var body = $"<p>To verify your account, click the link below:</p><p><a href='{verificationUrl}'>{verificationUrl}</a></p>";
 
             await _emailService.SendEmailAsync(registrationDto.Username, subject, body);
 

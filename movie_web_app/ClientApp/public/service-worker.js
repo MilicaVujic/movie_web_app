@@ -81,6 +81,9 @@ this.addEventListener("install",(event)=>{
         '/index.html',
         '/movie',
         '/',
+        '/account',
+        '/registration',
+        '/resetpassword',
       ])
     })
   )
